@@ -3,7 +3,7 @@ using Godot;
 public partial class Projectile : Area3D
 {
     [Export]
-    public float Speed { get; set; } = 200f;
+    public float Speed {get; set;} = 200f;
     [Export]
     public float ProjectileLifeTime = 8.0f;
 
@@ -24,11 +24,11 @@ public partial class Projectile : Area3D
         QueueFree();
     }
 
-    private void OnBodyEntered(Node body)
+    private void OnBodyEntered(Node hitNode)
     {
-        if (body.IsInGroup("Hostile"))
+        if (hitNode.IsInGroup("Hostile"))
         {
-            if (body is IEnemy enemy) 
+            if (hitNode is IEnemy enemy) 
                 ((Node)enemy).CallDeferred("Deactivate");
             QueueFree();
         }

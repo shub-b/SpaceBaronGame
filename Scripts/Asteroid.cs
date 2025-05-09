@@ -6,7 +6,7 @@ public partial class Asteroid : StaticBody3D, IEnemy
 	[Export] public float Damage = 10;
 	
 	[Export] public float DeactivationRage = 10f; 
-	private bool isActive;
+	private bool active;
 	private MeshInstance3D mesh;
 	private CollisionShape3D collision;
 
@@ -19,7 +19,7 @@ public partial class Asteroid : StaticBody3D, IEnemy
 
 	public void Deactivate()
 	{
-		isActive = false;
+		active = false;
 		mesh.Visible = false;
 		collision.Disabled = true;
 		SetPhysicsProcess(false);
@@ -27,13 +27,13 @@ public partial class Asteroid : StaticBody3D, IEnemy
 
 	public void Activate()
 	{
-		isActive = true;
+		active = true;
 		mesh.Visible = true;
 		collision.Disabled = false;
 		SetPhysicsProcess(true);
 	}
 
-	public bool IsActive() => isActive;
+	public bool IsActive() => active;
 
 	 public float ApplyDamage() => Damage;
 

@@ -1,4 +1,3 @@
-// EnemySpawnHandler.cs
 using Godot;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +17,8 @@ public partial class EnemySpawnHandler : Node3D
     [Export] public NodePath PlayerNode {get; set;}
 
     private CharacterBody3D playerShip;
+
+    //Initializing Object Pools for enemies
     private List<Asteroid> asteroidPool = new();
     private List<KamikazeEnemy> kamikazePool = new();
     private float lastSpawnZ;
@@ -69,6 +70,8 @@ public partial class EnemySpawnHandler : Node3D
 
        private void SpawnEnemy<T>(PackedScene scene,List<T> pool,int poolSize,float chance,Vector3 position) where T : Node3D, IEnemy
     {
+
+        //Lazy Load an enemy to the pool if all current enemies are active, otherwise just reuse from the object pool
         if (scene == null || rng.Randf() >= chance)
             return;
 

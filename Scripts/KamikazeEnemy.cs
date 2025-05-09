@@ -22,10 +22,8 @@ public partial class KamikazeEnemy : CharacterBody3D, IEnemy
 
 	public override void _PhysicsProcess(double delta)
 	{
-		if (!active)
-			return;
+		if (!active) return;
 		
-
 		var playerShip = GetTree().Root.GetNode<CharacterBody3D>("OuterSpace/PlayerShip");
 		Vector3 moveDirection = (playerShip.GlobalPosition - (Vector3.Back * 0.5f) - GlobalPosition).Normalized();
 
@@ -41,7 +39,7 @@ public partial class KamikazeEnemy : CharacterBody3D, IEnemy
 	}
 
 	public float ApplyDamage() => Damage;
-	public bool  IsActive()     => active;
+	public bool  IsActive()=> active;
 
 	public void Activate()
 	{
