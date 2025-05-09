@@ -25,7 +25,7 @@ public partial class KamikazeEnemy : CharacterBody3D, IEnemy
 		if (!active) return;
 		
 		var playerShip = GetTree().Root.GetNode<CharacterBody3D>("OuterSpace/PlayerShip");
-		Vector3 moveDirection = (playerShip.GlobalPosition - (Vector3.Back * 0.5f) - GlobalPosition).Normalized();
+		Vector3 moveDirection = (playerShip.GlobalPosition - (Vector3.Back * LookAtZOffset) - GlobalPosition).Normalized();
 
 		float speed = MoveSpeed;
 		if (GlobalPosition.Z > playerShip.GlobalPosition.Z)

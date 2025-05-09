@@ -15,7 +15,6 @@ material = SubResource("StandardMaterial3D_uttts")
 script = ExtResource("1_mqdx5")
 MoveSpeed = 25.0
 Damage = 20.0
-LookAtZOffset = 2.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("BoxMesh_0fj1v")
