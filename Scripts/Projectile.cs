@@ -28,7 +28,8 @@ public partial class Projectile : Area3D
     {
         if (body.IsInGroup("Hostile"))
         {
-            if (body is Node3D n) n.QueueFree();
+            if (body is IEnemy enemy) 
+                ((Node)enemy).CallDeferred("Deactivate");
             QueueFree();
         }
     }

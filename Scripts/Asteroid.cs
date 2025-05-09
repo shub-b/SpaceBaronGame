@@ -1,44 +1,47 @@
 // Asteroid.cs
 using Godot;
 
-public partial class Asteroid : StaticBody3D
+public partial class Asteroid : StaticBody3D, IEnemy
 {
-	[Export] public float RecycleOffset = 10f;
-
-	private bool _active;
-	private MeshInstance3D _mesh;
-	private CollisionShape3D _collision;
+	[Export] public float Damage = 10;
+	
+	[Export] public float DeactivationRage = 10f; 
+	private bool isActive;
+	private MeshInstance3D mesh;
+	private CollisionShape3D collision;
 
 	public override void _Ready()
 	{
-		_mesh      = GetNode<MeshInstance3D>("MeshInstance3D");
-		_collision = GetNode<CollisionShape3D>("CollisionShape3D");
+		mesh = GetNode<MeshInstance3D>("MeshInstance3D");
+		collision = GetNode<CollisionShape3D>("CollisionShape3D");
 		Deactivate();
 	}
 
 	public void Deactivate()
 	{
-		_active           = false;
-		_mesh.Visible     = false;
-		_collision.Disabled = true;
+		isActive = false;
+		mesh.Visible = false;
+		collision.Disabled = true;
 		SetPhysicsProcess(false);
 	}
 
 	public void Activate()
 	{
-		_active           = true;
-		_mesh.Visible     = true;
-		_collision.Disabled = false;
+		isActive = true;
+		mesh.Visible = true;
+		collision.Disabled = false;
 		SetPhysicsProcess(true);
 	}
 
-	public bool IsActive() => _active;
+	public bool IsActive() => isActive;
+
+	 public float ApplyDamage() => Damage;
 
 	public override void _PhysicsProcess(double delta)
 	{
-		var player = GetTree().Root
+		var playerShip = GetTree().Root
 			.GetNode<CharacterBody3D>("OuterSpace/PlayerShip");
-		if (GlobalPosition.Z > player.GlobalPosition.Z + RecycleOffset)
+		if (GlobalPosition.Z > playerShip.GlobalPosition.Z + DeactivationRage)
 			Deactivate();
 	}
 }

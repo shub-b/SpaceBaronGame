@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://c6a3dsya33xqx"]
+
+[ext_resource type="Script" uid="uid://urmme0lx625o" path="res://Scripts/KamikazeEnemy.cs" id="1_mqdx5"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uttts"]
+albedo_color = Color(1, 0, 0, 1)
+uv1_offset = Vector3(0.51, -0.705, 0)
+
+[sub_resource type="BoxMesh" id="BoxMesh_0fj1v"]
+material = SubResource("StandardMaterial3D_uttts")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_5v1tr"]
+
+[node name="KamikazeEnemy" type="CharacterBody3D" groups=["Hostile"]]
+script = ExtResource("1_mqdx5")
+MoveSpeed = 25.0
+Damage = 20.0
+LookAtZOffset = 2.0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_0fj1v")
+skeleton = NodePath("")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_5v1tr")

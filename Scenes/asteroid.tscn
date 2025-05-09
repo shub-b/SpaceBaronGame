@@ -6,8 +6,9 @@
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_fo5ed"]
 
-[node name="Asteroid" type="StaticBody3D" groups=["Hostile"]]
+[node name="Asteroid" type="StaticBody3D" groups=["Hostile", "Obstacle"]]
 script = ExtResource("1_0tomg")
+DeactivationRage = 5.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("SphereMesh_8j60k")
