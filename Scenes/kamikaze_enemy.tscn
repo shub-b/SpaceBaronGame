@@ -13,7 +13,7 @@ material = SubResource("StandardMaterial3D_uttts")
 
 [node name="KamikazeEnemy" type="CharacterBody3D" groups=["Hostile"]]
 script = ExtResource("1_mqdx5")
-MoveSpeed = 25.0
+MoveSpeed = 35.0
 Damage = 20.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]

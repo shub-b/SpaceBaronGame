@@ -21,7 +21,6 @@ height = 0.7
 is_hemisphere = true
 
 [node name="Projectile" type="Area3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0254211, 0.0447731, 0.0167313)
 script = ExtResource("1_a85iw")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
