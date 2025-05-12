@@ -36,7 +36,6 @@ fog_mode = 1
 fog_light_color = Color(0.0684683, 0.0373987, 0.0862754, 1)
 fog_light_energy = 1.25
 fog_density = 1.0
-volumetric_fog_enabled = true
 volumetric_fog_albedo = Color(0.158472, 0.158472, 0.158472, 1)
 volumetric_fog_emission_energy = 2.0
 volumetric_fog_length = 100.0
@@ -55,7 +54,6 @@ shader_parameter/blink_speed = 5.0
 
 [node name="TestPlane" type="MeshInstance3D" parent="."]
 transform = Transform3D(60, 0, 0, 0, 1, 0, 0, 0, 10000, 0, -1, -10000)
-visible = false
 gi_mode = 0
 mesh = SubResource("PlaneMesh_5a7ea")
 surface_material_override/0 = SubResource("ShaderMaterial_8j60k")
@@ -69,12 +67,15 @@ environment = SubResource("Environment_5a7ea")
 
 [node name="EnemySpawnHandler" type="Node3D" parent="."]
 script = ExtResource("4_8j60k")
+ActivateKamikazes = true
 AsteroidScene = ExtResource("4_fo5ed")
 KamikazeScene = ExtResource("7_k7acu")
 KamikazeChance = 0.05
-AsteroidPoolSize = 100
+AsteroidPoolSize = 70
+KamikazePoolSize = 10
 SpawnDist = 150.0
 SpawnSpace = 3.0
+KamikazeXSpawnRange = Vector2(-5, 5)
 PlayerNode = NodePath("../PlayerShip")
 
 [node name="Timer" type="Timer" parent="EnemySpawnHandler"]
@@ -86,7 +87,7 @@ autostart = true
 script = ExtResource("1_a02cp")
 Projectile = ExtResource("2_5a7ea")
 StrafeAcceleration = 100.0
-XAxisMaxBound = 90.0
+XAxisMaxBound = 45.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="PlayerShip"]
 mesh = SubResource("BoxMesh_yp4wr")

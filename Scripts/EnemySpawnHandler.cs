@@ -4,6 +4,9 @@ using System.Linq;
 
 public partial class EnemySpawnHandler : Node3D
 {
+    
+    [Export] public bool ActivateAsteroids {get; set;}
+    [Export] public bool ActivateKamikazes {get; set;}
     [Export] public PackedScene AsteroidScene {get; set;}
     [Export] public PackedScene KamikazeScene {get; set;}
     [Export] public float AsteroidChance {get; set;} = 1.0f;
@@ -25,11 +28,11 @@ public partial class EnemySpawnHandler : Node3D
     private RandomNumberGenerator rng = new();
 
     public int AsteroidTotalInPool => asteroidPool.Count;
-    public int AsteroidActiveCount => asteroidPool.Count(a => a.IsActive());
+    public int AsteroidActiveCount => asteroidPool.Count(rock => rock.IsActive());
     public int AsteroidInactiveCount => AsteroidTotalInPool - AsteroidActiveCount;
 
     public int KamikazeTotalInPool => kamikazePool.Count;
-    public int KamikazeActiveCount => kamikazePool.Count(k => k.IsActive());
+    public int KamikazeActiveCount => kamikazePool.Count(badShip => badShip.IsActive());
     public override void _Ready()
     {
         playerShip = GetNode<CharacterBody3D>(PlayerNode);
@@ -63,16 +66,24 @@ public partial class EnemySpawnHandler : Node3D
 
         Vector3 AsteroidSpawnPosition = new(xAsteroidRange, y, z);
         Vector3 KamikazeSpawnPosition = new(xKamikazeRange, y, z);
-        SpawnEnemy(AsteroidScene, asteroidPool, AsteroidPoolSize, AsteroidChance, AsteroidSpawnPosition);
-        SpawnEnemy(KamikazeScene, kamikazePool, KamikazePoolSize, KamikazeChance, KamikazeSpawnPosition);
 
+        if(ActivateAsteroids){
+            SpawnEnemy(AsteroidScene, asteroidPool, AsteroidPoolSize, AsteroidChance, AsteroidSpawnPosition);
+        }
+        if(ActivateKamikazes){
+            SpawnEnemy(KamikazeScene, kamikazePool, KamikazePoolSize, KamikazeChance, KamikazeSpawnPosition);
+        }
+    
     }
 
        private void SpawnEnemy<T>(PackedScene scene,List<T> pool,int poolSize,float chance,Vector3 position) where T : Node3D, IEnemy
     {
 
+        float diceRoll = rng.Randf();
+
         //Lazy Load an enemy to the pool if all current enemies are active, otherwise just reuse from the object pool
-        if (scene == null || rng.Randf() >= chance)
+        GD.Print($"{scene} Dice roll: {diceRoll}" );
+        if (scene == null || diceRoll >= chance)
             return;
 
         T enemy = pool.Find(e => !e.IsActive());
