@@ -1,24 +1,58 @@
-[gd_scene load_steps=5 format=3 uid="uid://c6a3dsya33xqx"]
+[gd_scene load_steps=9 format=3 uid="uid://c6a3dsya33xqx"]
 
 [ext_resource type="Script" uid="uid://urmme0lx625o" path="res://Scripts/KamikazeEnemy.cs" id="1_mqdx5"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uttts"]
-albedo_color = Color(1, 0, 0, 1)
-uv1_offset = Vector3(0.51, -0.705, 0)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mqdx5"]
+albedo_color = Color(0.56, 0, 0, 1)
 
-[sub_resource type="BoxMesh" id="BoxMesh_0fj1v"]
+[sub_resource type="PrismMesh" id="PrismMesh_uttts"]
+material = SubResource("StandardMaterial3D_mqdx5")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uttts"]
+albedo_color = Color(0.270588, 0, 0, 1)
+metallic = 0.33
+metallic_specular = 0.3
+
+[sub_resource type="TubeTrailMesh" id="TubeTrailMesh_mqdx5"]
 material = SubResource("StandardMaterial3D_uttts")
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_5v1tr"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0whqi"]
+transparency = 1
+albedo_color = Color(0, 0.27451, 1, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_mqdx5"]
+material = SubResource("StandardMaterial3D_0whqi")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_mqdx5"]
+size = Vector3(1, 1, 0.2)
 
 [node name="KamikazeEnemy" type="CharacterBody3D" groups=["Hostile"]]
 script = ExtResource("1_mqdx5")
-MoveSpeed = 35.0
-Damage = 20.0
+MoveSpeed = 40.0
+Damage = 26.0
+LookAtZOffset = 0.5
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = SubResource("BoxMesh_0fj1v")
+[node name="KamikazeHullMesh3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(7.64274e-16, 6.55671e-08, -1, 0.4, -6.55671e-08, -2.11758e-22, -1.74846e-08, -1.5, -4.37114e-08, 0, 0, 0)
+mesh = SubResource("PrismMesh_uttts")
+skeleton = NodePath("")
+
+[node name="KamikazeThrusterMesh3D" type="MeshInstance3D" parent="KamikazeHullMesh3D"]
+transform = Transform3D(4.77671e-15, -4.85637e-08, -1.25, 2.91409e-08, -0.148135, 2.91409e-08, -1, -9.71275e-09, 9.55343e-16, 0.2125, -0.454676, 0.00599997)
+mesh = SubResource("TubeTrailMesh_mqdx5")
+skeleton = NodePath("")
+
+[node name="KamikazeWingMesh3D" type="MeshInstance3D" parent="KamikazeHullMesh3D"]
+transform = Transform3D(0.5, -7.10543e-15, 8.47033e-22, 0, 0.333333, 0, -5.29396e-23, -1.77636e-15, 2, -0.125, -0.326667, -2.14186e-08)
+mesh = SubResource("PrismMesh_uttts")
+skeleton = NodePath("")
+
+[node name="KamikazeCockpitMesh3D" type="MeshInstance3D" parent="KamikazeHullMesh3D"]
+transform = Transform3D(2.52597e-15, -7.86805e-08, -0.9, 1.541e-08, -0.24, 2.09815e-08, -0.528809, -1.57361e-08, 6.87847e-16, 0.125, -0.233333, -1.5299e-08)
+mesh = SubResource("CapsuleMesh_mqdx5")
 skeleton = NodePath("")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-shape = SubResource("BoxShape3D_5v1tr")
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, -0.25)
+rotation_order = 1
+shape = SubResource("BoxShape3D_mqdx5")

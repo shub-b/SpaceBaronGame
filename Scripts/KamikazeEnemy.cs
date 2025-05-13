@@ -14,7 +14,7 @@ public partial class KamikazeEnemy : CharacterBody3D, IEnemy
 
 	public override void _Ready()
 	{
-		mesh = GetNode<MeshInstance3D>("MeshInstance3D");
+		mesh = GetNode<MeshInstance3D>("KamikazeHullMesh3D");
 		collisionShape = GetNode<CollisionShape3D>("CollisionShape3D");
 		AddToGroup("Hostile");
 		Deactivate();
@@ -28,7 +28,7 @@ public partial class KamikazeEnemy : CharacterBody3D, IEnemy
 		Vector3 moveDirection = -GlobalBasis.Z.Normalized();
 		if(playerShip != null && GlobalPosition.Z < playerShip.GlobalPosition.Z - 1.0f){
 			LookAt(playerShip.GlobalPosition, Vector3.Up);
-			moveDirection = (playerShip.GlobalPosition - (Vector3.Back * LookAtZOffset) - GlobalPosition).Normalized();
+			moveDirection = (playerShip.GlobalPosition + (Vector3.Forward * LookAtZOffset) - GlobalPosition).Normalized();
 		}
 
 		Velocity = moveDirection * MoveSpeed;
