@@ -82,7 +82,7 @@ public partial class EnemySpawnHandler : Node3D
         float diceRoll = rng.Randf();
 
         //Lazy Load an enemy to the pool if all current enemies are active, otherwise just reuse from the object pool
-        GD.Print($"{scene} Dice roll: {diceRoll}" );
+        //GD.Print($"{scene} Dice roll: {diceRoll}" );
         if (scene == null || diceRoll >= chance)
             return;
 

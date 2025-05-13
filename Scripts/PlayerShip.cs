@@ -1,17 +1,21 @@
 // PlayerShip.cs
+using System;
 using Godot;
 
 public partial class PlayerShip : CharacterBody3D
 {
-    [Export] public PackedScene Projectile { get; set; }
-    [Export] public float ProjectileInstantiationOffsetZ { get; set; } = 1.5f;
-    [Export] public Vector3 ProjectileScale { get; set; } = new Vector3(0.25f, 0.25f, 0.25f);
 
-    [Export] public float MaxPlayerSpeed { get; set; } = 25f;
-    [Export] public float StrafeAcceleration { get; set; } = 30f;
-    [Export] public float MaxStrafeSpeed { get; set; } = 25f;
-    [Export] public float XAxisMaxBound { get; set; } = 30f;
-    [Export] public float MaxHealth { get; set; } = 100f;
+    [Export] public PackedScene Projectile {get; set;}
+    [Export] public float ProjectileFireDelay {get; set;} = 0.5f;
+
+    [Export] public float ProjectileInstantiationOffsetZ {get; set;} = 1.5f;
+    [Export] public Vector3 ProjectileScale {get; set;} = new Vector3(0.5f, 0.5f, 0.5f);
+
+    [Export] public float MaxPlayerSpeed {get; set;} = 25f;
+    [Export] public float StrafeAcceleration {get; set;} = 30f;
+    [Export] public float MaxStrafeSpeed {get; set;} = 25f;
+    [Export] public float XAxisMaxBound {get; set;} = 30f;
+    [Export] public float MaxHealth {get; set;} = 100f;
 
     bool active;
 
@@ -19,19 +23,38 @@ public partial class PlayerShip : CharacterBody3D
     private float initialXPos;
     private float currentHealth;
 
+    private bool canShoot = true;
+    private Timer timer;
+
+
+    
+
     public override void _Ready()
     {
         initialXPos = GlobalPosition.X;
         currentHealth = MaxHealth;
+        timer = GetNode<Timer>("ShootTimer");
+        timer.WaitTime = ProjectileFireDelay;
+        timer.Timeout += OnShootTimeout;
     }
+
+    private void OnShootTimeout()
+    {
+        GD.Print($"Shoot Delay Activated");
+        canShoot = true;
+    }
+
 
     public override void _PhysicsProcess(double delta)
     {
         float input = Input.GetActionStrength("strafe_right") - Input.GetActionStrength("strafe_left");
         Velocity = new Vector3(currentStrafeSpeed, 0f, -MaxPlayerSpeed);
 
-        if (Input.IsActionJustPressed("fire_projectile"))
+        if (Input.IsActionPressed("fire_projectile") && canShoot){
             FireProjectile();
+            canShoot = false;
+            timer.Start();
+        }
 
         StrafeMovement(input, (float)delta);
         MoveAndSlide();
@@ -61,7 +84,7 @@ public partial class PlayerShip : CharacterBody3D
     {
         if (Projectile == null)
             return;
-
+      
         var missile = Projectile.Instantiate<Area3D>();
         GetParent().AddChild(missile);
         missile.Scale = ProjectileScale;

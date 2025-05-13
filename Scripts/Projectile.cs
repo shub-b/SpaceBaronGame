@@ -2,10 +2,8 @@ using Godot;
 
 public partial class Projectile : Area3D
 {
-    [Export]
-    public float Speed {get; set;} = 200f;
-    [Export]
-    public float ProjectileLifeTime = 8.0f;
+    [Export] public float Speed {get; set;} = 200f;
+    [Export] public float ProjectileLifeTime = 3.0f;
 
     public override void _Ready()
     {
@@ -19,7 +17,7 @@ public partial class Projectile : Area3D
         Translate(Vector3.Forward * Speed * (float)delta);
     }
 
-    private void _OnTimerTimeout()
+    private void OnTimerTimeout()
     {
         QueueFree();
     }

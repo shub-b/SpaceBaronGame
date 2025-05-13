@@ -2,8 +2,6 @@
 
 [ext_resource type="Script" uid="uid://76big8lysonv" path="res://Scripts/Projectile.cs" id="1_a85iw"]
 
-[sub_resource type="SphereShape3D" id="SphereShape3D_f8cdk"]
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_f8cdk"]
 albedo_color = Color(1, 0, 0, 1)
 metallic = 1.0
@@ -20,16 +18,20 @@ radius = 0.25
 height = 0.7
 is_hemisphere = true
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_f8cdk"]
+size = Vector3(0.708557, 0.737671, 1.00941)
+
 [node name="Projectile" type="Area3D"]
 script = ExtResource("1_a85iw")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0, 0, -0.35)
-shape = SubResource("SphereShape3D_f8cdk")
+ProjectileLifeTime = 3000.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
 mesh = SubResource("SphereMesh_fo5ed")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0, 0, -0.35)
+shape = SubResource("BoxShape3D_f8cdk")
 
 [node name="Timer" type="Timer" parent="."]
 one_shot = true
