@@ -15,6 +15,7 @@ metallic_specular = 0.3
 
 [sub_resource type="TubeTrailMesh" id="TubeTrailMesh_mqdx5"]
 material = SubResource("StandardMaterial3D_uttts")
+radius = 0.4
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0whqi"]
 transparency = 1
@@ -28,9 +29,7 @@ size = Vector3(1, 0.605225, 1.48779)
 
 [node name="KamikazeEnemy" type="CharacterBody3D" groups=["Hostile"]]
 script = ExtResource("1_mqdx5")
-MoveSpeed = 40.0
-Damage = 26.0
-LookAtZOffset = 0.5
+MoveSpeed = 90.0
 
 [node name="KamikazeHullMesh3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(7.64274e-16, 6.55671e-08, -1, 0.4, -6.55671e-08, -2.11758e-22, -1.74846e-08, -1.5, -4.37114e-08, 0, 0, 0)
@@ -48,11 +47,23 @@ mesh = SubResource("PrismMesh_uttts")
 skeleton = NodePath("")
 
 [node name="KamikazeCockpitMesh3D" type="MeshInstance3D" parent="KamikazeHullMesh3D"]
-transform = Transform3D(2.52597e-15, -7.86805e-08, -0.9, 1.541e-08, -0.24, 2.09815e-08, -0.528809, -1.57361e-08, 6.87847e-16, 0.125, -0.233333, -1.5299e-08)
+transform = Transform3D(2.52597e-15, -7.86805e-08, -0.9, 1.541e-08, -0.24, 2.09815e-08, -0.528809, -1.57361e-08, 6.87847e-16, 0.153603, -0.233333, -1.5299e-08)
 mesh = SubResource("CapsuleMesh_mqdx5")
 skeleton = NodePath("")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0552979, 0)
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
 rotation_order = 1
 shape = SubResource("BoxShape3D_mqdx5")
+
+[node name="RayFront" type="RayCast3D" parent="."]
+transform = Transform3D(2.08, 0, 0, 0, -9.09197e-08, -2.08, 0, 2.08, -9.09197e-08, 0, 0, -0.7)
+debug_shape_custom_color = Color(0.656487, 0.142358, 0.445392, 1)
+
+[node name="RayLeft" type="RayCast3D" parent="."]
+transform = Transform3D(2.00913, 0.538344, -2.35317e-08, 0, -9.09197e-08, -2.08, -0.538344, 2.00913, -8.78217e-08, 0, 0, -0.7)
+debug_shape_custom_color = Color(0.198656, 0.346917, 0.773035, 1)
+
+[node name="RayRight" type="RayCast3D" parent="."]
+transform = Transform3D(2.00913, -0.538344, 2.35317e-08, 0, -9.09197e-08, -2.08, 0.538344, 2.00913, -8.78217e-08, 0, 0, -0.7)
+debug_shape_custom_color = Color(0.460592, 0.382342, 0.02016, 1)

@@ -2,19 +2,21 @@ using Godot;
 
 public partial class Projectile : Area3D
 {
-    [Export] public float Speed {get; set;} = 200f;
-    [Export] public float ProjectileLifeTime = 3.0f;
+    [Export] public float ProjectileSpeed{get; set;} = 500f;
+    [Export] public float ProjectileLifeTime {get; set;} = 8.0f;
+    [Export] public float Damage{ get; set; } = 3f;
 
     public override void _Ready()
     {
         var timer = GetNode<Timer>("Timer");
         timer.WaitTime = ProjectileLifeTime;
 
+        BodyEntered += OnBodyEntered;
     }
     
     public override void _PhysicsProcess(double delta)
     {
-        Translate(Vector3.Forward * Speed * (float)delta);
+        Translate(-GlobalTransform.Basis.Z * ProjectileSpeed * (float)delta);
     }
 
     private void OnTimerTimeout()
@@ -24,11 +26,13 @@ public partial class Projectile : Area3D
 
     private void OnBodyEntered(Node hitNode)
     {
-        if (hitNode.IsInGroup("Hostile"))
+        if (!hitNode.IsInGroup("Hostile"))
+            return;
+
+        if (hitNode is IEnemy enemy)
         {
-            if (hitNode is IEnemy enemy) 
-                ((Node)enemy).CallDeferred("Deactivate");
-            QueueFree();
+            enemy.TakeDamage(Damage);
         }
+        QueueFree();
     }
 }

@@ -1,6 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://5qu3f2y4dhps"]
+[gd_scene load_steps=5 format=3 uid="uid://ini2pkkol5fi"]
 
-[ext_resource type="Script" uid="uid://76big8lysonv" path="res://Scripts/Projectile.cs" id="1_a85iw"]
+[ext_resource type="Script" uid="uid://dbwmai7ger8hn" path="res://Scripts/BossProjectile.cs" id="1_ji021"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_f8cdk"]
 albedo_color = Color(1, 0, 0, 1)
@@ -18,12 +18,12 @@ radius = 0.25
 height = 0.7
 is_hemisphere = true
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_f8cdk"]
-size = Vector3(0.708557, 0.737671, 1.77228)
+[sub_resource type="BoxShape3D" id="BoxShape3D_ji021"]
+size = Vector3(0.45, 0.395, 0.7)
 
-[node name="Projectile" type="Area3D"]
-script = ExtResource("1_a85iw")
-ProjectileLifeTime = 20.0
+[node name="BossProjectile" type="Area3D"]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+script = ExtResource("1_ji021")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
@@ -31,12 +31,12 @@ mesh = SubResource("SphereMesh_fo5ed")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 process_mode = 3
-transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0, 0, -0.617006)
-shape = SubResource("BoxShape3D_f8cdk")
-debug_color = Color(0.914886, 0.225782, 0.466424, 0.42)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.35)
+shape = SubResource("BoxShape3D_ji021")
+debug_color = Color(0.615032, 0.636234, 0.183218, 0.42)
 
 [node name="Timer" type="Timer" parent="."]
-wait_time = 8.0
+wait_time = 3.0
 one_shot = true
 autostart = true
 

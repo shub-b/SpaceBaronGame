@@ -26,9 +26,6 @@ public partial class PlayerShip : CharacterBody3D
     private bool canShoot = true;
     private Timer timer;
 
-
-    
-
     public override void _Ready()
     {
         initialXPos = GlobalPosition.X;
@@ -97,23 +94,21 @@ public partial class PlayerShip : CharacterBody3D
         pos.X = Mathf.Clamp(pos.X, initialXPos - XAxisMaxBound, initialXPos + XAxisMaxBound);
         GlobalPosition = pos;
     }
-
     private void CheckEnemyCollisions()
     {
         int collisionCount = GetSlideCollisionCount();
         for (int i = 0; i < collisionCount; i++)
         {
             var collision = GetSlideCollision(i);
-            var hitNode = collision.GetCollider() as Node;
-            if (hitNode != null && hitNode.IsInGroup("Hostile"))
+            if (collision.GetCollider() is IEnemy enemy)
             {
-                float damage = 0;
-                if (hitNode is IEnemy enemy)
-                {
-                    damage = enemy.ApplyDamage();
-                    enemy.Deactivate();
-                }
+                // Enemy tells us how much damage it inflicts
+                float damage = enemy.ApplyDamage();
+                
+                // Tell the enemy it got hit—its own TakeDamage will call Deactivate() if needed
+                enemy.TakeDamage(damage);
 
+                // You take that damage
                 TakeDamage(damage);
                 break;
             }
