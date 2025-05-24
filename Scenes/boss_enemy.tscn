@@ -26,7 +26,6 @@ size = Vector3(9.63257, 1, 2.47647)
 
 [node name="BossEnemy" type="CharacterBody3D"]
 script = ExtResource("1_54mmy")
-OscAmplitude = 100.0
 ProjectileScene = ExtResource("2_hu4bx")
 InitialBranches = 3
 FireArcAngle = 120.0

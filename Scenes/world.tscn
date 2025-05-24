@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://c1j7gf6114g4p"]
+[gd_scene load_steps=24 format=3 uid="uid://c1j7gf6114g4p"]
 
 [ext_resource type="Script" uid="uid://bsw1dlmc6kxen" path="res://Scripts/PlayerShip.cs" id="1_a02cp"]
 [ext_resource type="PackedScene" uid="uid://5qu3f2y4dhps" path="res://Scenes/projectile.tscn" id="2_5a7ea"]
@@ -10,6 +10,7 @@
 [ext_resource type="Script" uid="uid://dw3pjnxnaq2cu" path="res://Scripts/DebugStatUI.cs" id="7_o06y3"]
 [ext_resource type="Script" uid="uid://bwkja6nrbkwvj" path="res://Scripts/HeadsUpDisplay.cs" id="9_0fj1v"]
 [ext_resource type="Shader" uid="uid://bgms3qnqd2vnw" path="res://Shaders/health_fill.gdshader" id="10_ikia7"]
+[ext_resource type="PackedScene" uid="uid://d1v84gaa23dea" path="res://Scenes/boss_enemy.tscn" id="11_ikia7"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_0fj1v"]
 render_priority = 0
@@ -90,6 +91,8 @@ ActivateAsteroids = true
 ActivateKamikazes = true
 AsteroidScene = ExtResource("4_fo5ed")
 KamikazeScene = ExtResource("7_k7acu")
+BossScene = ExtResource("11_ikia7")
+BossTriggerZ = -200.0
 AsteroidChance = 0.4
 KamikazeChance = 0.02
 AsteroidPoolSize = 200
