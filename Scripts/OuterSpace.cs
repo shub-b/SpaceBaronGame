@@ -1,6 +1,4 @@
-// res://Scripts/Managers/OuterSpace.cs
 using Godot;
-using System;
 
 public partial class OuterSpace : Node3D
 {
@@ -40,7 +38,6 @@ public partial class OuterSpace : Node3D
 
     private void OnBossSpawned(BossEnemy boss)
     {
-        // Connect the boss’s defeat signal
         boss.Connect(BossEnemy.SignalName.BossDefeated,new Callable(this, nameof(OnBossDefeated)));
     }
 

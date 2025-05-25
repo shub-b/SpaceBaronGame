@@ -31,12 +31,8 @@ public partial class Projectile : Area3D
     {
         if (!hitNode.IsInGroup("Hostile"))
             return;
-
-        if (hitNode is IEnemy enemy)
-        {
-        
-            enemy.TakeDamage(Damage * GlobalDamageMultiplier);
-        }
+        var enemy = (hitNode as IEnemy) ?? NullEnemy.Instance;
+        enemy.TakeDamage(Damage * GlobalDamageMultiplier);
         QueueFree();
     }
 }
