@@ -1,79 +1,97 @@
-[gd_scene load_steps=11 format=3 uid="uid://d1v84gaa23dea"]
+[gd_scene load_steps=13 format=3 uid="uid://d1v84gaa23dea"]
 
 [ext_resource type="Script" uid="uid://dwyno3w63shew" path="res://Scripts/BossEnemy.cs" id="1_54mmy"]
 [ext_resource type="PackedScene" uid="uid://ini2pkkol5fi" path="res://Scenes/boss_projectile.tscn" id="2_hu4bx"]
+[ext_resource type="Shader" uid="uid://cct3u0ox6amey" path="res://Shaders/boss_hit_pulse.gdshader" id="3_wqnlb"]
+[ext_resource type="Material" uid="uid://blau72ygj2uak" path="res://Scenes/boss_health_bar.tres" id="4_73776"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_73776"]
+render_priority = 0
+shader = ExtResource("3_wqnlb")
+shader_parameter/pulse_time = 1.0
+shader_parameter/highlight_color = Vector3(1, 0.3, 0)
+shader_parameter/metallic = 1.0
+shader_parameter/roughness = 0.2
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_hu4bx"]
 
-[sub_resource type="BoxMesh" id="BoxMesh_c5t2i"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_54mmy"]
-albedo_color = Color(0, 1, 1, 1)
-
 [sub_resource type="SphereMesh" id="SphereMesh_hu4bx"]
-material = SubResource("StandardMaterial3D_54mmy")
 is_hemisphere = true
 
 [sub_resource type="BoxMesh" id="BoxMesh_wqnlb"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_73776"]
 
+[sub_resource type="BoxMesh" id="BoxMesh_c5t2i"]
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_hu4bx"]
 size = Vector3(1, 0.946777, 0.431992)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_73776"]
-size = Vector3(9.63257, 1, 2.47647)
+size = Vector3(9.63257, 1, 1.09859)
 
-[node name="BossEnemy" type="CharacterBody3D"]
+[node name="BossEnemy" type="CharacterBody3D" groups=["Hostile"]]
 script = ExtResource("1_54mmy")
+Frequency = 0.08
 ProjectileScene = ExtResource("2_hu4bx")
-InitialBranches = 3
-FireArcAngle = 120.0
+PulseMaterial = SubResource("ShaderMaterial_73776")
+HealthBarMaterial = ExtResource("4_73776")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("SphereShape3D_hu4bx")
 disabled = true
 
-[node name="Muzzle1" type="Node3D" parent="."]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -4.5, 0, 2)
-
-[node name="Muzzle2" type="Node3D" parent="."]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 4.5, 0, 2)
-
-[node name="BossHullMeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(-4, 0, -3.49691e-07, 0, 4, 0, 3.49691e-07, 0, -4, 0, 0, 0)
-mesh = SubResource("BoxMesh_c5t2i")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="BossHullMeshInstance3D"]
-transform = Transform3D(0.5, 0, 1.91069e-15, -1.91069e-15, 8.74228e-09, 0.5, 0, -0.2, 2.18557e-08, 0, 0, -0.5)
-mesh = SubResource("SphereMesh_hu4bx")
-
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="BossHullMeshInstance3D"]
-transform = Transform3D(2, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
-mesh = SubResource("BoxMesh_wqnlb")
-
-[node name="MeshInstance3D3" type="MeshInstance3D" parent="BossHullMeshInstance3D"]
-transform = Transform3D(0.5, 0, 0, 0, -2.18557e-08, -0.5, 0, 0.5, -2.18557e-08, 1, 0, 0)
-mesh = SubResource("CylinderMesh_73776")
-
-[node name="MeshInstance3D4" type="MeshInstance3D" parent="BossHullMeshInstance3D"]
-transform = Transform3D(0.5, 0, 0, 0, -2.18557e-08, -0.5, 0, 0.5, -2.18557e-08, -1, 0, 0)
-mesh = SubResource("CylinderMesh_73776")
-
 [node name="ShootTimer" type="Timer" parent="."]
 autostart = true
 
-[node name="HeadZone" type="Area3D" parent="."]
+[node name="BossShipMesh" type="Node3D" parent="."]
+
+[node name="BossHead" type="Node3D" parent="BossShipMesh"]
+
+[node name="BossControlMesh3D" type="MeshInstance3D" parent="BossShipMesh/BossHead"]
+transform = Transform3D(-2, 6.99382e-08, -1.52855e-14, -7.64276e-15, 3.49691e-08, 2, 1.74845e-07, 0.8, -8.74228e-08, 1.74845e-07, 0, 2)
+mesh = SubResource("SphereMesh_hu4bx")
+skeleton = NodePath("../../BossBody/BossMeshInstance3D")
+
+[node name="BossBody" type="Node3D" parent="BossShipMesh"]
+
+[node name="BossStructureMesh3D" type="MeshInstance3D" parent="BossShipMesh/BossBody"]
+transform = Transform3D(-8, 0, -1.74845e-07, 0, 2, 0, 6.99382e-07, 0, -2, 0, 0, 0)
+mesh = SubResource("BoxMesh_wqnlb")
+
+[node name="BossLeftCannonMesh3D" type="MeshInstance3D" parent="BossShipMesh/BossBody"]
+transform = Transform3D(-2, -2.26494e-07, 1.32005e-14, 0, -6.55671e-08, -2, 3.01992e-07, -1.5, 8.74228e-08, -4, 0, 0.5)
+mesh = SubResource("CylinderMesh_73776")
+
+[node name="BossRightCannonMesh3D" type="MeshInstance3D" parent="BossShipMesh/BossBody"]
+transform = Transform3D(-2, -2.26494e-07, 1.32005e-14, 0, -6.55671e-08, -2, 3.01992e-07, -1.5, 8.74228e-08, 4, 0, 0.5)
+mesh = SubResource("CylinderMesh_73776")
+
+[node name="BossMeshInstance3D" type="MeshInstance3D" parent="BossShipMesh/BossBody"]
+transform = Transform3D(-4, 0, -3.49691e-07, 0, 4, 0, 3.49691e-07, 0, -4, 0, 0, 0)
+mesh = SubResource("BoxMesh_c5t2i")
+
+[node name="FiringMuzzles" type="Node3D" parent="."]
+
+[node name="Muzzle1" type="Node3D" parent="FiringMuzzles"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -4, 0, 2)
+
+[node name="Muzzle2" type="Node3D" parent="FiringMuzzles"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 4, 0, 2)
+
+[node name="CollisionZones" type="Node3D" parent="."]
+
+[node name="HeadZone" type="Area3D" parent="CollisionZones"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.44261)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="HeadZone"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CollisionZones/HeadZone"]
 transform = Transform3D(2, -6.98132e-05, -2.48026e-19, 6.98132e-05, 2, 7.10543e-15, 0, -7.10543e-15, 2, 0, 0, 0)
 shape = SubResource("BoxShape3D_hu4bx")
 
-[node name="BodyZone" type="Area3D" parent="."]
+[node name="BodyZone" type="Area3D" parent="CollisionZones"]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="BodyZone"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.8)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CollisionZones/BodyZone"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.48894)
 shape = SubResource("BoxShape3D_73776")
 
 [connection signal="timeout" from="ShootTimer" to="." method="OnShootTimeout"]

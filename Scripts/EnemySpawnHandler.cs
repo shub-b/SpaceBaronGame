@@ -9,17 +9,19 @@ public partial class EnemySpawnHandler : Node3D
     [Export] public PackedScene AsteroidScene { get; set; }
     [Export] public PackedScene KamikazeScene { get; set; }
     [Export] public PackedScene BossScene { get; set; }
-    [Export] public float BossTriggerZ { get; set; } = -1500f;
+    [Export] public float BossTriggerDistance { get; set; } = 1000f;
     [Export] public float BossOffsetZ { get; set; } = 50f;
     [Export] public float AsteroidChance { get; set; } = 1.0f;
     [Export] public float KamikazeChance { get; set; } = 0.2f;
     [Export] public int AsteroidPoolSize { get; set; } = 20;
     [Export] public int KamikazePoolSize { get; set; } = 5;
-    [Export] public float SpawnDist { get; set; } = 50f;
+    [Export] public float SpawnDist { get; set; } = 35f;
     [Export] public float SpawnSpace { get; set; } = 5f;
     [Export] public Vector2 AsteroidXSpawnRange { get; set; } = new(-50, 50);
     [Export] public Vector2 KamikazeXSpawnRange { get; set; } = new(-20, 20);
     [Export] public NodePath PlayerNode { get; set; }
+
+    [Signal] public delegate void BossSpawnedEventHandler(BossEnemy boss);
 
     private CharacterBody3D playerShip;
     private List<Asteroid> asteroidPool = new();
@@ -27,17 +29,19 @@ public partial class EnemySpawnHandler : Node3D
     private float lastSpawnZ;
     private RandomNumberGenerator rng = new();
     private bool bossSpawned = false;
+    private float bossTriggerZ;
 
     public int AsteroidTotalInPool => asteroidPool.Count;
-    public int AsteroidActiveCount => asteroidPool.Count(e => e.IsActive());
+    public int AsteroidActiveCount => asteroidPool.Count(rock => rock.IsActive());
     public int AsteroidInactiveCount => AsteroidTotalInPool - AsteroidActiveCount;
     public int KamikazeTotalInPool => kamikazePool.Count;
-    public int KamikazeActiveCount => kamikazePool.Count(e => e.IsActive());
+    public int KamikazeActiveCount => kamikazePool.Count(kami => kami.IsActive());
 
     public override void _Ready()
     {
         playerShip = GetNode<CharacterBody3D>(PlayerNode);
         lastSpawnZ = playerShip.GlobalPosition.Z;
+        bossTriggerZ = lastSpawnZ - BossTriggerDistance;
         rng.Randomize();
         SetProcess(true);
     }
@@ -52,17 +56,15 @@ public partial class EnemySpawnHandler : Node3D
 
         float playerZ = playerShip.GlobalPosition.Z;
 
-        if (!bossSpawned && playerZ <= BossTriggerZ)
+        if (!bossSpawned && playerZ <= bossTriggerZ)
         {
             SpawnBoss();
-            ActivateAsteroids = false;
+            //ActivateAsteroids = false;
+            AsteroidChance = 0.5f;
             ActivateKamikazes = false;
             bossSpawned = true;
             return;
         }
-
-        if (bossSpawned)
-            return;
 
         if (lastSpawnZ - playerZ >= SpawnSpace)
         {
@@ -73,13 +75,18 @@ public partial class EnemySpawnHandler : Node3D
 
     private void SpawnBoss()
     {
-        var boss = BossScene.Instantiate<Node3D>();
-        var parent = GetTree().Root.GetNode<Node3D>("OuterSpace");
-        parent.AddChild(boss);
-        boss.Scale = new Vector3(4, 4, 4);
-        Vector3 pos = playerShip.GlobalPosition;
+        var bossNode = BossScene.Instantiate<BossEnemy>();
+
+        var outerSpace = GetTree().Root.GetChild(0) as Node3D;
+
+        outerSpace.AddChild(bossNode);
+
+        bossNode.Scale = new Vector3(4, 4, 4);
+        var pos = playerShip?.GlobalPosition ?? Vector3.Zero;
         pos.Z -= BossOffsetZ;
-        boss.GlobalPosition = pos;
+        bossNode.GlobalPosition = pos;
+
+        EmitSignal(SignalName.BossSpawned, bossNode);
     }
 
     private void SpawnSingleEnemyInstance(float playerZ)
@@ -102,6 +109,14 @@ public partial class EnemySpawnHandler : Node3D
             SpawnEnemy(KamikazeScene, kamikazePool,
                        KamikazePoolSize, KamikazeChance,
                        kamikazePos);
+    }
+
+    public void ResetSpawnCycle()
+    {
+        bossSpawned = false;
+        lastSpawnZ = playerShip.GlobalPosition.Z;
+        bossTriggerZ = lastSpawnZ - BossTriggerDistance;
+        SetProcess(true);
     }
 
     private void SpawnEnemy<T>(

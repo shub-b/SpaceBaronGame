@@ -25,14 +25,10 @@ public partial class BossProjectile : Area3D
 
     private void OnBodyEntered(Node body)
     {
-        // Only damage the player once
         if (!body.IsInGroup("Player"))
             return;
 
-        // Call the PlayerShip.TakeDamage method
         body.CallDeferred("TakeDamage", Damage);
-
-        // Destroy this projectile
         QueueFree();
     }
 }

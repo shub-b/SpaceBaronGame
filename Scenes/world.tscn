@@ -1,6 +1,7 @@
-[gd_scene load_steps=24 format=3 uid="uid://c1j7gf6114g4p"]
+[gd_scene load_steps=26 format=3 uid="uid://c1j7gf6114g4p"]
 
 [ext_resource type="Script" uid="uid://bsw1dlmc6kxen" path="res://Scripts/PlayerShip.cs" id="1_a02cp"]
+[ext_resource type="Script" uid="uid://be8tn1aecvstw" path="res://Scripts/OuterSpace.cs" id="1_c5t2i"]
 [ext_resource type="PackedScene" uid="uid://5qu3f2y4dhps" path="res://Scenes/projectile.tscn" id="2_5a7ea"]
 [ext_resource type="Shader" uid="uid://c820ogq3uxuee" path="res://Shaders/test_surface.gdshader" id="2_go701"]
 [ext_resource type="Script" uid="uid://c78seg422yurp" path="res://Scripts/EnemySpawnHandler.cs" id="4_8j60k"]
@@ -11,16 +12,7 @@
 [ext_resource type="Script" uid="uid://bwkja6nrbkwvj" path="res://Scripts/HeadsUpDisplay.cs" id="9_0fj1v"]
 [ext_resource type="Shader" uid="uid://bgms3qnqd2vnw" path="res://Shaders/health_fill.gdshader" id="10_ikia7"]
 [ext_resource type="PackedScene" uid="uid://d1v84gaa23dea" path="res://Scenes/boss_enemy.tscn" id="11_ikia7"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_0fj1v"]
-render_priority = 0
-shader = ExtResource("2_go701")
-shader_parameter/scale = 1.0
-shader_parameter/color_black = Vector3(0, 0, 0)
-shader_parameter/color_yellow = Vector3(1, 0, 0)
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_ikia7"]
-material = SubResource("ShaderMaterial_0fj1v")
+[ext_resource type="Script" uid="uid://6iw407bvso7f" path="res://Scripts/UpgradeMenu.cs" id="13_e0ngr"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_a02cp"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -41,6 +33,16 @@ fog_density = 1.0
 volumetric_fog_albedo = Color(0.158472, 0.158472, 0.158472, 1)
 volumetric_fog_emission_energy = 2.0
 volumetric_fog_length = 100.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0fj1v"]
+render_priority = 0
+shader = ExtResource("2_go701")
+shader_parameter/scale = 10.0
+shader_parameter/color_black = Vector3(0.1, 0.1, 0.1)
+shader_parameter/color_yellow = Vector3(1, 0.5, 0)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ikia7"]
+material = SubResource("ShaderMaterial_0fj1v")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ikia7"]
 size = Vector3(1, 0.6, 1.5)
@@ -70,12 +72,7 @@ shader_parameter/blink_threshold = 0.2
 shader_parameter/blink_speed = 5.0
 
 [node name="OuterSpace" type="Node3D"]
-
-[node name="TestPlane" type="MeshInstance3D" parent="."]
-transform = Transform3D(50, 0, 0, 0, 1, 0, 0, 0, 10000, 0, -1, -10000)
-visible = false
-gi_mode = 0
-mesh = SubResource("PlaneMesh_ikia7")
+script = ExtResource("1_c5t2i")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
@@ -92,12 +89,11 @@ ActivateKamikazes = true
 AsteroidScene = ExtResource("4_fo5ed")
 KamikazeScene = ExtResource("7_k7acu")
 BossScene = ExtResource("11_ikia7")
-BossTriggerZ = -200.0
 AsteroidChance = 0.4
 KamikazeChance = 0.02
 AsteroidPoolSize = 200
 KamikazePoolSize = 10
-SpawnDist = 500.0
+SpawnDist = 250.0
 KamikazeXSpawnRange = Vector2(-5, 5)
 PlayerNode = NodePath("../PlayerShip")
 
@@ -111,10 +107,17 @@ script = ExtResource("1_a02cp")
 Projectile = ExtResource("2_5a7ea")
 ProjectileFireDelay = 0.2
 MaxPlayerSpeed = 35.0
-StrafeAcceleration = 100.0
+StrafeAcceleration = 150.0
 MaxStrafeSpeed = 40.0
 XAxisMaxBound = 45.0
 MaxHealth = 300.0
+
+[node name="TestPlane" type="MeshInstance3D" parent="PlayerShip"]
+transform = Transform3D(25, 0, 0, 0, 1, 0, 0, 0, 5, 0, -1, 0)
+visible = false
+gi_mode = 0
+mesh = SubResource("PlaneMesh_ikia7")
+skeleton = NodePath("../..")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerShip"]
 shape = SubResource("BoxShape3D_ikia7")
@@ -177,6 +180,7 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="HeadsUpDisplay" type="CanvasLayer" parent="."]
+process_mode = 3
 follow_viewport_enabled = true
 script = ExtResource("9_0fj1v")
 PlayerShipPath = NodePath("../PlayerShip")
@@ -209,5 +213,67 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="UpgradeMenu" type="Control" parent="HeadsUpDisplay"]
+visible = false
+custom_minimum_size = Vector2(600, 500)
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -250.0
+offset_right = 300.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("13_e0ngr")
+
+[node name="Label" type="Label" parent="HeadsUpDisplay/UpgradeMenu"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -61.0
+offset_right = 58.0
+offset_bottom = 23.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 30
+text = "Upgrade Menu:"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HeadsUpDisplay/UpgradeMenu"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -271.5
+offset_top = -195.5
+offset_right = 271.5
+offset_bottom = 195.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HealthButton" type="Button" parent="HeadsUpDisplay/UpgradeMenu/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Ship Health +25"
+
+[node name="DamageButton" type="Button" parent="HeadsUpDisplay/UpgradeMenu/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Missle Damage x2.5"
+
+[node name="FireRateButton" type="Button" parent="HeadsUpDisplay/UpgradeMenu/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Missle Fire Rate +25%"
+
+[connection signal="BossSpawned" from="EnemySpawnHandler" to="." method="OnBossSpawned"]
 [connection signal="timeout" from="EnemySpawnHandler/Timer" to="EnemySpawnHandler" method="TrySpawn"]
 [connection signal="timeout" from="PlayerShip/ShootTimer" to="PlayerShip" method="OnShootTimeout"]
+[connection signal="DamageSelected" from="HeadsUpDisplay/UpgradeMenu" to="." method="ApplyDamage"]
+[connection signal="FireRateSelected" from="HeadsUpDisplay/UpgradeMenu" to="." method="ApplyFireRate"]
+[connection signal="HealthSelected" from="HeadsUpDisplay/UpgradeMenu" to="." method="ApplyHealth"]

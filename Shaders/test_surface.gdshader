@@ -3,10 +3,10 @@ render_mode unshaded;
 
 varying vec3 world_vertex;
 
-uniform float scale = 10.0;
+uniform float scale = 100.0;
 // Set the two checker colors:
-uniform vec3 color_black = vec3(0.0, 0.0, 0.0);
-uniform vec3 color_yellow = vec3(1.0, 0.1, 0.7);
+uniform vec3 color_black = vec3(0.1, 0.1, 0.1);
+uniform vec3 color_yellow = vec3(1.0, 0.5, 0.0);
 
 bool trues_even(bvec3 val) {
     return (int(val.x) + int(val.y) + int(val.z)) % 2 == 0;

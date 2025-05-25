@@ -2,9 +2,12 @@ using Godot;
 
 public partial class Projectile : Area3D
 {
-    [Export] public float ProjectileSpeed{get; set;} = 500f;
-    [Export] public float ProjectileLifeTime {get; set;} = 8.0f;
+    [Export] public float ProjectileSpeed{ get; set; } = 500f;
+    [Export] public float ProjectileLifeTime { get; set; } = 8.0f;
     [Export] public float Damage{ get; set; } = 3f;
+
+    public static float GlobalDamageMultiplier { get; set; } = 1f;
+
 
     public override void _Ready()
     {
@@ -31,7 +34,8 @@ public partial class Projectile : Area3D
 
         if (hitNode is IEnemy enemy)
         {
-            enemy.TakeDamage(Damage);
+        
+            enemy.TakeDamage(Damage * GlobalDamageMultiplier);
         }
         QueueFree();
     }

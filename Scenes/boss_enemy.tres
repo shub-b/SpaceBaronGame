@@ -1,0 +1,11 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://crahf0knlfhvw"]
+
+[ext_resource type="Shader" uid="uid://cct3u0ox6amey" path="res://Shaders/boss_hit_pulse.gdshader" id="1_hx6yg"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_hx6yg")
+shader_parameter/pulse_time = 1.0
+shader_parameter/highlight_color = Vector3(1, 0.5, 0)
+shader_parameter/metallic = 1.0
+shader_parameter/roughness = 0.2
