@@ -1,0 +1,22 @@
+[gd_scene load_steps=5 format=3 uid="uid://dj0chk04ah2kx"]
+
+[ext_resource type="Script" uid="uid://d0o04chuwpfca" path="res://Scripts/PowerPickup.cs" id="1_hr0x2"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hr0x2"]
+albedo_color = Color(0.941176, 0.215686, 1, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_6seln"]
+material = SubResource("StandardMaterial3D_hr0x2")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_epusw"]
+
+[node name="PowerPickup" type="Area3D"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+script = ExtResource("1_hr0x2")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_6seln")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_epusw")
+debug_color = Color(0.151623, 0.489279, 0.348615, 0.42)

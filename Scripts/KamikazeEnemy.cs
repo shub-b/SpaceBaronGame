@@ -3,112 +3,129 @@ using System;
 
 public partial class KamikazeEnemy : CharacterBody3D, IEnemy
 {
+    // — Inspector settings —
     [Export] public float MoveSpeed { get; set; } = 100f;
-    [Export] public float Damage { get; set; } = 26f;
     [Export] public float MaxHealth { get; set; } = 15f;
+    [Export] public int PointsValue { get; set; } = 300;
+    [Export] public float Damage { get; set; } = 19f;
+    [Export] public PackedScene ProjectileScene { get; set; }
+    [Export] public float ShootInterval { get; set; } = 1.0f;
+    [Export] public float AttackDuration { get; set; } = 5.0f;
     [Export] public float LookAtPlayerOffset { get; set; } = 1.0f;
     [Export] public float StopLookAtPlayerOffset { get; set; } = 5.0f;
     [Export] public float DeactivationRange { get; set; } = 5.0f;
-    [Export] public float AvoidStrength { get; set; } = 150f;
+
+    private enum State { Attack, Homing }
+    private State state;
 
     private bool active;
     private float currentHealth;
-    private MeshInstance3D mesh;
-    private CollisionShape3D collisionShape;
     private CharacterBody3D playerShip;
-    private RayCast3D rayF, rayL, rayR;
+    private AnimationPlayer anim;
+    private Timer shootTimer;
+    private Timer attackTimer;
 
     public override void _Ready()
     {
-        mesh = GetNode<MeshInstance3D>("KamikazeHullMesh3D");
-        collisionShape = GetNode<CollisionShape3D>("CollisionShape3D");
-        rayF = GetNode<RayCast3D>("RayFront");
-        rayL = GetNode<RayCast3D>("RayLeft");
-        rayR = GetNode<RayCast3D>("RayRight");
-
-        playerShip = GetTree().Root.GetNode<CharacterBody3D>("OuterSpace/PlayerShip");
-        rayF.AddException(playerShip);
-        rayL.AddException(playerShip);
-        rayR.AddException(playerShip);
         AddToGroup("Hostile");
-
         currentHealth = MaxHealth;
+        playerShip = GetTree().Root.GetNode<CharacterBody3D>("OuterSpace/PlayerShip");
+
+        anim = GetNode<AnimationPlayer>("KamikazeShipMesh/AnimationPlayer");
+        anim.AnimationFinished += name =>
+        {
+            if (name != "Intro")
+                return;
+
+            state = State.Attack;
+            active = true;
+            SetPhysicsProcess(true);
+            shootTimer.Start();
+            attackTimer.Start();
+        };
+
+        shootTimer = GetNode<Timer>("ShootTimer");
+        shootTimer.OneShot = false;
+        shootTimer.Autostart = false;
+        shootTimer.WaitTime = ShootInterval;
+        shootTimer.Timeout += () =>
+        {
+            if (!active || state != State.Attack) return;
+            var proj = ProjectileScene.Instantiate<Area3D>();
+            GetParent().AddChild(proj);
+            proj.GlobalPosition = GlobalPosition;
+            proj.LookAtFromPosition(GlobalPosition, playerShip.GlobalPosition, Vector3.Up);
+        };
+
+        attackTimer = GetNode<Timer>("HomingTimer");
+        attackTimer.OneShot = true;
+        attackTimer.Autostart = false;
+        attackTimer.WaitTime = AttackDuration;
+        attackTimer.Timeout += () =>
+        {
+            if (!active || state != State.Attack) return;
+            state = State.Homing;
+            shootTimer.Stop();
+        };
+
         Deactivate();
     }
 
     public override void _PhysicsProcess(double delta)
     {
-        if (!active)
-            return;
+        if (!active) return;
 
-        if (playerShip == null || !IsInstanceValid(playerShip))
-            return;
-
-        Vector3 moveDir;
-        if (GlobalPosition.Z < playerShip.GlobalPosition.Z - StopLookAtPlayerOffset)
+        if (state == State.Attack && GlobalPosition.Z < playerShip.GlobalPosition.Z + 50f)
         {
             LookAt(playerShip.GlobalPosition, Vector3.Up);
-            moveDir = (playerShip.GlobalPosition + Vector3.Forward * LookAtPlayerOffset - GlobalPosition).Normalized();
+            Velocity = new Vector3(0f, 0f, playerShip.Velocity.Z);
         }
         else
         {
-            moveDir = -GlobalTransform.Basis.Z.Normalized();
-        }
-
-        rayF.ForceRaycastUpdate();
-        rayL.ForceRaycastUpdate();
-        rayR.ForceRaycastUpdate();
-
-        if (rayF.IsColliding())
-        {
-            bool hitLeft = rayL.IsColliding();
-            bool hitRight = rayR.IsColliding();
-
-            if (!hitLeft && hitRight)
-                moveDir -= GlobalTransform.Basis.X * AvoidStrength * (float)delta;
-            else if (!hitRight && hitLeft)
-                moveDir += GlobalTransform.Basis.X * AvoidStrength * (float)delta;
+            Vector3 moveDir;
+            if (GlobalPosition.Z < playerShip.GlobalPosition.Z - StopLookAtPlayerOffset)
+            {
+                LookAt(playerShip.GlobalPosition, Vector3.Up);
+                moveDir = (playerShip.GlobalPosition + Vector3.Forward * LookAtPlayerOffset - GlobalPosition).Normalized();
+            }
             else
-                moveDir += GlobalTransform.Basis.X * AvoidStrength * (float)delta * (GD.Randf() < 0.5f ? 1f : -1f);
-
-            moveDir = moveDir.Normalized();
+            {
+                moveDir = -GlobalTransform.Basis.Z.Normalized();
+            }
+            Velocity = moveDir * MoveSpeed;
         }
-        Velocity = moveDir * MoveSpeed;
         MoveAndSlide();
-
         if (GlobalPosition.Z > playerShip.GlobalPosition.Z + DeactivationRange)
+        {
             Deactivate();
+        }
     }
 
     public bool IsActive() => active;
-
     public float ApplyDamage() => Damage;
 
     public void TakeDamage(float amount)
     {
-        if (!active)
-            return;
-
+        if (!active) return;
         currentHealth -= amount;
-        GD.Print($"KamikazeEnemy took {amount} damage, HP now {currentHealth}/{Damage}");
-        if (currentHealth <= 0)
-            Deactivate();
+        if (currentHealth <= 0f) Deactivate();
     }
 
     public void Activate()
     {
         active = true;
-        currentHealth = Damage;
-        mesh.Visible = true;
-        collisionShape.CallDeferred("set_disabled", false);
-        SetPhysicsProcess(true);
+        Show();
+        state = State.Attack;
+        SetPhysicsProcess(false);
+        anim.Play("Intro");
     }
 
     public void Deactivate()
     {
         active = false;
-        mesh.Visible = false;
-        collisionShape.CallDeferred("set_disabled", true);
+        Hide();
         SetPhysicsProcess(false);
+        shootTimer.Stop();
+        attackTimer.Stop();
     }
 }

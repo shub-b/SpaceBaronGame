@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://d1v84gaa23dea"]
+[gd_scene load_steps=16 format=3 uid="uid://d1v84gaa23dea"]
 
 [ext_resource type="Script" uid="uid://dwyno3w63shew" path="res://Scripts/BossEnemy.cs" id="1_54mmy"]
 [ext_resource type="PackedScene" uid="uid://ini2pkkol5fi" path="res://Scenes/boss_projectile.tscn" id="2_hu4bx"]
@@ -28,12 +28,100 @@ is_hemisphere = true
 size = Vector3(1, 0.946777, 0.431992)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_73776"]
-size = Vector3(9.63257, 1, 1.09859)
+size = Vector3(10.0075, 1, 1.09859)
+
+[sub_resource type="Animation" id="Animation_73776"]
+resource_name = "BossSpawnIn"
+length = 5.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("BossShipMesh:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1.75, 5.5),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(1.74533, 0, 0), Vector3(0, 0, 0), Vector3(0, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("BossShipMesh:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1.75, 5.5),
+"transitions": PackedFloat32Array(1, 1, 0.420448),
+"update": 0,
+"values": [Vector3(0, 30, -50), Vector3(0, -30, 21), Vector3(0, 0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("BossShipMesh/CollisionZones:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 5.46667),
+"transitions": PackedFloat32Array(1, 652.578),
+"update": 0,
+"values": [Vector3(0, -10, 0), Vector3(0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_wbqnn"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("BossShipMesh:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0.698132, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("BossShipMesh:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 30, -50)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("BossShipMesh/CollisionZones:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_mi7op"]
+_data = {
+&"BossSpawnIn": SubResource("Animation_73776"),
+&"RESET": SubResource("Animation_wbqnn")
+}
 
 [node name="BossEnemy" type="CharacterBody3D" groups=["Hostile"]]
 script = ExtResource("1_54mmy")
 Frequency = 0.08
 ProjectileScene = ExtResource("2_hu4bx")
+ShootInterval = 1.0
+MuzzleDelay = 1.0
+FireArcAngle = 120.0
 PulseMaterial = SubResource("ShaderMaterial_73776")
 HealthBarMaterial = ExtResource("4_73776")
 
@@ -45,6 +133,7 @@ disabled = true
 autostart = true
 
 [node name="BossShipMesh" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.766044, -0.642787, 0, 0.642787, 0.766044, 0, 30, -50)
 
 [node name="BossHead" type="Node3D" parent="BossShipMesh"]
 
@@ -71,27 +160,43 @@ mesh = SubResource("CylinderMesh_73776")
 transform = Transform3D(-4, 0, -3.49691e-07, 0, 4, 0, 3.49691e-07, 0, -4, 0, 0, 0)
 mesh = SubResource("BoxMesh_c5t2i")
 
-[node name="FiringMuzzles" type="Node3D" parent="."]
+[node name="FiringMuzzles" type="Node3D" parent="BossShipMesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
 
-[node name="Muzzle1" type="Node3D" parent="FiringMuzzles"]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -4, 0, 2)
+[node name="Muzzle1" type="Node3D" parent="BossShipMesh/FiringMuzzles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 0)
 
-[node name="Muzzle2" type="Node3D" parent="FiringMuzzles"]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 4, 0, 2)
+[node name="Muzzle2" type="Node3D" parent="BossShipMesh/FiringMuzzles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 0)
 
-[node name="CollisionZones" type="Node3D" parent="."]
+[node name="CollisionZones" type="Node3D" parent="BossShipMesh"]
 
-[node name="HeadZone" type="Area3D" parent="CollisionZones"]
+[node name="HeadZone" type="Area3D" parent="BossShipMesh/CollisionZones"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.44261)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CollisionZones/HeadZone"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BossShipMesh/CollisionZones/HeadZone"]
 transform = Transform3D(2, -6.98132e-05, -2.48026e-19, 6.98132e-05, 2, 7.10543e-15, 0, -7.10543e-15, 2, 0, 0, 0)
 shape = SubResource("BoxShape3D_hu4bx")
 
-[node name="BodyZone" type="Area3D" parent="CollisionZones"]
+[node name="BodyZone" type="Area3D" parent="BossShipMesh/CollisionZones"]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CollisionZones/BodyZone"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.48894)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BossShipMesh/CollisionZones/BodyZone"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.489)
 shape = SubResource("BoxShape3D_73776")
+
+[node name="AsteroidZone" type="Area3D" parent="BossShipMesh/CollisionZones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.31455)
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BossShipMesh/CollisionZones/AsteroidZone"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.489)
+shape = SubResource("BoxShape3D_73776")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="BossShipMesh"]
+root_node = NodePath("../..")
+libraries = {
+&"": SubResource("AnimationLibrary_mi7op")
+}
 
 [connection signal="timeout" from="ShootTimer" to="." method="OnShootTimeout"]

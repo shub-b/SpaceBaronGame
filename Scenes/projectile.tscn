@@ -19,11 +19,26 @@ height = 0.7
 is_hemisphere = true
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_f8cdk"]
-size = Vector3(0.708557, 0.737671, 1.77228)
+size = Vector3(0.708557, 0.737671, 0.995515)
 
 [node name="Projectile" type="Area3D"]
 script = ExtResource("1_a85iw")
-ProjectileLifeTime = 20.0
+ProjectileSpeed = 150.0
+
+[node name="Hit1" type="RayCast3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, -3.0598e-08, -0.7, 0, 0.7, -3.0598e-08, 0, 0, -0.133567)
+hit_from_inside = true
+collide_with_areas = true
+
+[node name="Hit2" type="RayCast3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, -3.0598e-08, -0.7, 0, 0.7, -3.0598e-08, 0.25, 0, 0)
+hit_from_inside = true
+collide_with_areas = true
+
+[node name="Hit3" type="RayCast3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, -3.0598e-08, -0.7, 0, 0.7, -3.0598e-08, -0.25, 0, 0)
+hit_from_inside = true
+collide_with_areas = true
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
@@ -31,12 +46,11 @@ mesh = SubResource("SphereMesh_fo5ed")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 process_mode = 3
-transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0, 0, -0.617006)
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0, 0, -0.345138)
 shape = SubResource("BoxShape3D_f8cdk")
 debug_color = Color(0.914886, 0.225782, 0.466424, 0.42)
 
 [node name="Timer" type="Timer" parent="."]
-wait_time = 8.0
 one_shot = true
 autostart = true
 

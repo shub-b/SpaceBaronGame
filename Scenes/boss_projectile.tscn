@@ -16,13 +16,14 @@ lightmap_size_hint = Vector2i(9, 12)
 material = SubResource("StandardMaterial3D_f8cdk")
 radius = 0.25
 height = 0.7
-is_hemisphere = true
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_ji021"]
-size = Vector3(0.45, 0.395, 0.7)
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ji021"]
+radius = 0.250881
+height = 0.70562
 
 [node name="BossProjectile" type="Area3D"]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+collision_layer = 4
+collision_mask = 4
 script = ExtResource("1_ji021")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
@@ -31,8 +32,8 @@ mesh = SubResource("SphereMesh_fo5ed")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 process_mode = 3
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.35)
-shape = SubResource("BoxShape3D_ji021")
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+shape = SubResource("CapsuleShape3D_ji021")
 debug_color = Color(0.615032, 0.636234, 0.183218, 0.42)
 
 [node name="Timer" type="Timer" parent="."]

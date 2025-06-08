@@ -1,11 +1,9 @@
-// DebugStatUI.cs
 using Godot;
 
 public partial class DebugStatUI : CanvasLayer
 {
     [Export] public NodePath PlayerNode  { get; set; }
     [Export] public NodePath SpawnerNode { get; set; }
-
     private PlayerShip playerShip;
     private EnemySpawnHandler enemySpawner;
     private Label playerZLabel;

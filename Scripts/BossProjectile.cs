@@ -2,8 +2,8 @@ using Godot;
 
 public partial class BossProjectile : Area3D
 {
-    [Export] public float Speed {get; set;} = 5f;
-    [Export] public float ProjectileLifeTime = 7.0f;
+    [Export] public float Speed {get; set;} = 10f;
+    [Export] public float ProjectileLifeTime = 5.0f;
     [Export] public float Damage = 10f;
 
     public override void _Ready()
@@ -25,10 +25,11 @@ public partial class BossProjectile : Area3D
 
     private void OnBodyEntered(Node body)
     {
-        if (!body.IsInGroup("Player"))
-            return;
+        if (body is PlayerShip player)
+        {
+            player.Controller.TakeDamage(Damage);
 
-        body.CallDeferred("TakeDamage", Damage);
+        }
         QueueFree();
     }
 }

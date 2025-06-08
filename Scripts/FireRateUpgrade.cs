@@ -2,7 +2,7 @@ using Godot;
 
 public partial class FireRateUpgrade : IPlayerUpgrades
 {
-    [Export] public float Multiplier { get; set; } = 0.8f;
+    [Export] public float Multiplier { get; set; } = 0.95f;
 
     public void ApplyTo(PlayerShip ship)
     {

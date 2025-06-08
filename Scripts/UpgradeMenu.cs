@@ -4,42 +4,58 @@ using System;
 
 public partial class UpgradeMenu : Control
 {
-    // 1) Declare three Godot signals
     [Signal] public delegate void HealthSelectedEventHandler();
     [Signal] public delegate void FireRateSelectedEventHandler();
     [Signal] public delegate void DamageSelectedEventHandler();
 
+    private Button healthButton;
+    private Button fireRateButton;
+    private Button damageButton;
+
+    private HealthBoost healthUpgrade;
+    private FireRateUpgrade fireRateUpgrade;
+    private DamageUpgrade damageUpgrade;
+
     public override void _Ready()
     {
-        // 2) Hook each button’s pressed() to a local handler
-        GetNode<Button>("VBoxContainer/HealthButton").Pressed += OnHealthPressed;
-        GetNode<Button>("VBoxContainer/FireRateButton").Pressed += OnFireRatePressed;
-        GetNode<Button>("VBoxContainer/DamageButton").Pressed += OnDamagePressed;
+        healthButton = GetNode<Button>("VBoxContainer/HealthButton");
+        fireRateButton = GetNode<Button>("VBoxContainer/FireRateButton");
+        damageButton = GetNode<Button>("VBoxContainer/DamageButton");
+
+        healthUpgrade = new HealthBoost();
+        fireRateUpgrade = new FireRateUpgrade();
+        damageUpgrade = new DamageUpgrade();
+
+        float fireRatePct = (1f - fireRateUpgrade.Multiplier) * 100f;
+        float damagePct = (damageUpgrade.Multiplier - 1f) * 100f;   
+
+        healthButton.Text = $"Health +{healthUpgrade.ExtraHealth:F0}";
+        fireRateButton.Text = $"Fire Rate +{fireRatePct:F0}%";
+        damageButton.Text = $"Damage +{damagePct:F0}%";
+
+        healthButton.Pressed += OnHealthPressed;
+        fireRateButton.Pressed += OnFireRatePressed;
+        damageButton.Pressed += OnDamagePressed;
     }
 
-    // 3) In each handler, emit the corresponding signal, then hide
     private void OnHealthPressed()
     {
-        GD.Print("[UpgradeMenu] Health button pressed");
         EmitSignal(SignalName.HealthSelected);
         HideMenu();
     }
 
     private void OnFireRatePressed()
     {
-        GD.Print("[UpgradeMenu] FireRates button pressed");
         EmitSignal(SignalName.FireRateSelected);
         HideMenu();
     }
 
     private void OnDamagePressed()
     {
-        GD.Print("[UpgradeMenu] Damage button pressed");
         EmitSignal(SignalName.DamageSelected);
         HideMenu();
     }
 
-    // 4) Utility methods to show/hide
     public void ShowMenu() => Visible = true;
     public void HideMenu() => Visible = false;
 }

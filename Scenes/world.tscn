@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://c1j7gf6114g4p"]
+[gd_scene load_steps=33 format=3 uid="uid://c1j7gf6114g4p"]
 
 [ext_resource type="Script" uid="uid://bsw1dlmc6kxen" path="res://Scripts/PlayerShip.cs" id="1_a02cp"]
 [ext_resource type="Script" uid="uid://be8tn1aecvstw" path="res://Scripts/OuterSpace.cs" id="1_c5t2i"]
@@ -13,6 +13,8 @@
 [ext_resource type="Shader" uid="uid://bgms3qnqd2vnw" path="res://Shaders/health_fill.gdshader" id="10_ikia7"]
 [ext_resource type="PackedScene" uid="uid://d1v84gaa23dea" path="res://Scenes/boss_enemy.tscn" id="11_ikia7"]
 [ext_resource type="Script" uid="uid://6iw407bvso7f" path="res://Scripts/UpgradeMenu.cs" id="13_e0ngr"]
+[ext_resource type="FontFile" uid="uid://dl4dfqvuxra8s" path="res://Scenes/TabelSans-9MqPB.otf" id="14_e0ngr"]
+[ext_resource type="PackedScene" uid="uid://dj0chk04ah2kx" path="res://Scenes/power_pickup.tscn" id="15_kn0ld"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_a02cp"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -22,30 +24,20 @@ ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
 sky_material = SubResource("ProceduralSkyMaterial_a02cp")
 
 [sub_resource type="Environment" id="Environment_5a7ea"]
-background_mode = 2
+background_mode = 1
+background_color = Color(0.0618377, 0.0142037, 0.19396, 1)
 sky = SubResource("Sky_go701")
-tonemap_mode = 2
+ssao_enabled = true
 glow_enabled = true
-fog_mode = 1
+glow_normalized = true
+glow_intensity = 2.0
+glow_bloom = 0.13
+glow_blend_mode = 0
 fog_light_color = Color(0.0684683, 0.0373987, 0.0862754, 1)
 fog_light_energy = 1.25
-fog_density = 1.0
-volumetric_fog_albedo = Color(0.158472, 0.158472, 0.158472, 1)
-volumetric_fog_emission_energy = 2.0
+volumetric_fog_density = 0.0
+volumetric_fog_albedo = Color(0.112915, 0.0101003, 0.218595, 1)
 volumetric_fog_length = 100.0
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_0fj1v"]
-render_priority = 0
-shader = ExtResource("2_go701")
-shader_parameter/scale = 10.0
-shader_parameter/color_black = Vector3(0.1, 0.1, 0.1)
-shader_parameter/color_yellow = Vector3(1, 0.5, 0)
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_ikia7"]
-material = SubResource("ShaderMaterial_0fj1v")
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_ikia7"]
-size = Vector3(1, 0.6, 1.5)
 
 [sub_resource type="PrismMesh" id="PrismMesh_ikia7"]
 
@@ -65,6 +57,87 @@ metallic_specular = 0.3
 material = SubResource("StandardMaterial3D_uttts")
 radius = 0.4
 
+[sub_resource type="Animation" id="Animation_kn0ld"]
+resource_name = "Idle"
+length = 0.4
+loop_mode = 1
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation:z")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.2, 0, 0.2, 0),
+"times": PackedFloat32Array(0)
+}
+
+[sub_resource type="Animation" id="Animation_hgpy0"]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation:z")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.2, 0, 0.2, 0),
+"times": PackedFloat32Array(0)
+}
+
+[sub_resource type="Animation" id="Animation_t2t4p"]
+resource_name = "StrafeLeft"
+length = 0.4
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation:z")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.2, 0, 0.2, 0, 0.261799, -0.2, 0, 0.2, 0),
+"times": PackedFloat32Array(0, 0.4)
+}
+
+[sub_resource type="Animation" id="Animation_0pcbe"]
+resource_name = "StrafeRight"
+length = 0.4
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation:z")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.2, 0, 0.2, 0, -0.261799, -0.2, 0, 0.2, 0),
+"times": PackedFloat32Array(0, 0.4)
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_axeuq"]
+_data = {
+&"Idle": SubResource("Animation_kn0ld"),
+&"RESET": SubResource("Animation_hgpy0"),
+&"StrafeLeft": SubResource("Animation_t2t4p"),
+&"StrafeRight": SubResource("Animation_0pcbe")
+}
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0fj1v"]
+render_priority = 0
+shader = ExtResource("2_go701")
+shader_parameter/scale = 10.0
+shader_parameter/color_black = Vector3(0.1, 0.1, 0.1)
+shader_parameter/color_yellow = Vector3(1, 0.5, 0)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ikia7"]
+material = SubResource("ShaderMaterial_0fj1v")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ikia7"]
+size = Vector3(1, 0.6, 1.5)
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_7yui6"]
 shader = ExtResource("10_ikia7")
 shader_parameter/health = 1.0
@@ -73,6 +146,7 @@ shader_parameter/blink_speed = 5.0
 
 [node name="OuterSpace" type="Node3D"]
 script = ExtResource("1_c5t2i")
+PickupScene = ExtResource("15_kn0ld")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
@@ -89,12 +163,12 @@ ActivateKamikazes = true
 AsteroidScene = ExtResource("4_fo5ed")
 KamikazeScene = ExtResource("7_k7acu")
 BossScene = ExtResource("11_ikia7")
-AsteroidChance = 0.4
-KamikazeChance = 0.02
-AsteroidPoolSize = 200
-KamikazePoolSize = 10
-SpawnDist = 250.0
-KamikazeXSpawnRange = Vector2(-5, 5)
+BossOffsetZ = 100.0
+AsteroidPoolSize = 500
+AsteroidSeparationDistance = 35.0
+AsteroidXSpawnRange = Vector2(-100, 100)
+KamikazeSpawnDist = 200.0
+KamiKazeSpawnDistDelay = 50.0
 PlayerNode = NodePath("../PlayerShip")
 
 [node name="Timer" type="Timer" parent="EnemySpawnHandler"]
@@ -103,14 +177,41 @@ one_shot = true
 autostart = true
 
 [node name="PlayerShip" type="CharacterBody3D" parent="." groups=["Player"]]
+collision_layer = 5
+collision_mask = 5
+motion_mode = 1
 script = ExtResource("1_a02cp")
 Projectile = ExtResource("2_5a7ea")
 ProjectileFireDelay = 0.2
-MaxPlayerSpeed = 35.0
-StrafeAcceleration = 150.0
-MaxStrafeSpeed = 40.0
-XAxisMaxBound = 45.0
-MaxHealth = 300.0
+XAxisMaxBound = 95.0
+
+[node name="PlayerShipMesh" type="Node3D" parent="PlayerShip"]
+
+[node name="PlayerHullMesh3D" type="MeshInstance3D" parent="PlayerShip/PlayerShipMesh"]
+transform = Transform3D(7.64274e-16, 6.55671e-08, -1, 0.4, -6.55671e-08, -2.11758e-22, -1.74846e-08, -1.5, -4.37114e-08, 0, 0, 0)
+layers = 7
+mesh = SubResource("PrismMesh_ikia7")
+skeleton = NodePath("")
+
+[node name="PlayerWingMesh3D" type="MeshInstance3D" parent="PlayerShip/PlayerShipMesh"]
+transform = Transform3D(3.82137e-16, 2.18557e-08, -2, 0.2, -2.18557e-08, -3.17644e-22, -8.7423e-09, -0.499999, -8.74228e-08, -8.88178e-15, -0.05, 0.490001)
+mesh = SubResource("PrismMesh_ikia7")
+skeleton = NodePath("")
+
+[node name="KamikazeCockpitMesh3D" type="MeshInstance3D" parent="PlayerShip/PlayerShipMesh"]
+transform = Transform3D(0.528809, -3.55271e-15, 2.48816e-21, -9.46812e-22, -1.57361e-08, -0.36, -1.77636e-14, 0.36, -1.57361e-08, 3.01981e-14, 0.0614412, 0.35)
+mesh = SubResource("CapsuleMesh_7yui6")
+skeleton = NodePath("")
+
+[node name="KamikazeThrusterMesh3D" type="MeshInstance3D" parent="PlayerShip/PlayerShipMesh"]
+transform = Transform3D(1, -3.28626e-14, -1.37643e-21, 2.11758e-22, -9.7127e-09, -0.5, 4.9738e-14, 0.222203, -2.18556e-08, -0.006, 0.085, 0.682014)
+mesh = SubResource("TubeTrailMesh_c5t2i")
+skeleton = NodePath("")
+
+[node name="StrafeAnimation" type="AnimationPlayer" parent="PlayerShip/PlayerShipMesh"]
+libraries = {
+&"": SubResource("AnimationLibrary_axeuq")
+}
 
 [node name="TestPlane" type="MeshInstance3D" parent="PlayerShip"]
 transform = Transform3D(25, 0, 0, 0, 1, 0, 0, 0, 5, 0, -1, 0)
@@ -123,27 +224,6 @@ skeleton = NodePath("../..")
 shape = SubResource("BoxShape3D_ikia7")
 debug_color = Color(0.313735, 0.622335, 0.198939, 0.42)
 
-[node name="PlayerHullMesh3D" type="MeshInstance3D" parent="PlayerShip"]
-transform = Transform3D(7.64274e-16, 6.55671e-08, -1, 0.4, -6.55671e-08, -2.11758e-22, -1.74846e-08, -1.5, -4.37114e-08, 0, 0, 0)
-layers = 7
-mesh = SubResource("PrismMesh_ikia7")
-skeleton = NodePath("")
-
-[node name="PlayerWingMesh3D" type="MeshInstance3D" parent="PlayerShip/PlayerHullMesh3D"]
-transform = Transform3D(0.5, -1.42109e-14, 8.47033e-22, 0, 0.333333, 3.55271e-15, -2.64698e-23, 0, 2, -0.125, -0.326667, -2.14186e-08)
-mesh = SubResource("PrismMesh_ikia7")
-skeleton = NodePath("")
-
-[node name="KamikazeCockpitMesh3D" type="MeshInstance3D" parent="PlayerShip/PlayerHullMesh3D"]
-transform = Transform3D(2.52597e-15, -7.86805e-08, -0.9, 1.541e-08, -0.24, 2.09815e-08, -0.528809, -1.57361e-08, 6.87847e-16, 0.153603, -0.233333, -1.5299e-08)
-mesh = SubResource("CapsuleMesh_7yui6")
-skeleton = NodePath("")
-
-[node name="KamikazeThrusterMesh3D" type="MeshInstance3D" parent="PlayerShip/PlayerHullMesh3D"]
-transform = Transform3D(4.77671e-15, -4.85637e-08, -1.25, 2.91409e-08, -0.148135, 2.91409e-08, -1, -9.71275e-09, 9.55343e-16, 0.2125, -0.454676, 0.00599997)
-mesh = SubResource("TubeTrailMesh_c5t2i")
-skeleton = NodePath("")
-
 [node name="CameraRig" type="SpringArm3D" parent="PlayerShip"]
 transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 10, 0)
 script = ExtResource("7_0fj1v")
@@ -152,8 +232,10 @@ Offset = Vector3(0, 5, 10)
 [node name="Camera3D" type="Camera3D" parent="PlayerShip/CameraRig"]
 v_offset = 10.0
 current = true
-fov = 90.0
+fov = 100.0
 size = 10.0
+near = 1.0
+far = 2000.0
 
 [node name="ShootTimer" type="Timer" parent="PlayerShip"]
 one_shot = true
@@ -270,6 +352,46 @@ text = "Missle Damage x2.5"
 layout_mode = 2
 size_flags_vertical = 3
 text = "Missle Fire Rate +25%"
+
+[node name="PlayerScore" type="Control" parent="HeadsUpDisplay"]
+layout_mode = 3
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+grow_horizontal = 2
+
+[node name="PlayerScoreLabel" type="Label" parent="HeadsUpDisplay/PlayerScore"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -49.0
+offset_right = 49.0
+offset_bottom = 46.0
+grow_horizontal = 2
+theme_override_fonts/font = ExtResource("14_e0ngr")
+theme_override_font_sizes/font_size = 45
+text = "SCORE PLACEHOLDER*"
+horizontal_alignment = 1
+
+[node name="DamageDone" type="Control" parent="HeadsUpDisplay"]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DamageDoneLabel" type="Label" parent="HeadsUpDisplay/DamageDone"]
+layout_mode = 0
+offset_right = 177.0
+offset_bottom = 46.0
+theme_override_fonts/font = ExtResource("14_e0ngr")
+theme_override_font_sizes/font_size = 45
+text = "DMG: ?"
+horizontal_alignment = 2
 
 [connection signal="BossSpawned" from="EnemySpawnHandler" to="." method="OnBossSpawned"]
 [connection signal="timeout" from="EnemySpawnHandler/Timer" to="EnemySpawnHandler" method="TrySpawn"]

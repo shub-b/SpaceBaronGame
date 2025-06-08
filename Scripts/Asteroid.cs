@@ -4,6 +4,8 @@ public partial class Asteroid : StaticBody3D, IEnemy
 {
     [Export] public float Damage { get; set; } = 10f;
     [Export] public float MaxHealth { get; set; } = 2f;
+
+    [Export] public int PointsValue { get; set; } = 10;
     [Export] public float DeactivationRange { get; set; } = 10f;
 
     private float currentHealth;

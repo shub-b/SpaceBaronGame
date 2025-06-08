@@ -1,16 +1,18 @@
+using System;
 using Godot;
 
 public partial class BossEnemy : CharacterBody3D, IEnemy
 {
-    [Export] public float Amplitude { get; set; } = 50f;
-    [Export] public float Frequency { get; set; } = 0.2f;
+    [Export] public float Amplitude { get; set; } = 80f;
+    [Export] public float Frequency { get; set; } = 0.1f;
     [Export] public PackedScene ProjectileScene { get; set; }
     [Export] public float ShootInterval { get; set; } = 1.5f;
     [Export] public float MuzzleDelay { get; set; } = 0.5f;
     [Export] public float PlayerSeparationDistance { get; set; } = 50f;
-    [Export] public int ProjectileQuantity { get; set; } = 3;
-    [Export] public float FireArcAngle { get; set; } = 120f;
-    [Export] public float MaxHealth { get; set; } = 1000f;
+    [Export] public int ProjectileQuantity { get; set; } = 6;
+    [Export] public float FireArcAngle { get; set; } = 180f;
+    [Export] public float MaxHealth { get; set; } = 550f;
+    [Export] public int PointsValue { get; set; } = 3500;
     [Export] public float Damage { get; set; } = 200f;
     [Export] public float HeadDamageMultiplier { get; set; } = 2.5f;
     [Export] public float BodyDamageMultiplier { get; set; } = 1.0f;
@@ -27,36 +29,40 @@ public partial class BossEnemy : CharacterBody3D, IEnemy
     private CharacterBody3D playerShip;
     private Timer shootTimer;
     private Node3D[] muzzles;
-    private Area3D headZone, bodyZone;
+    private Area3D headZone, bodyZone, astRemoverZone;
     private MeshInstance3D headControlMesh;
+    private Node3D bossMesh;
+    private AnimationPlayer bossAnimation;
+
 
     public override void _Ready()
     {
         AddToGroup("Hostile");
         currentHealth = MaxHealth;
+
         Activate();
 
         playerShip = GetTree().Root.GetNode<CharacterBody3D>("OuterSpace/PlayerShip");
 
         muzzles =
         [
-            GetNode<Node3D>("FiringMuzzles/Muzzle1"),
-            GetNode<Node3D>("FiringMuzzles/Muzzle2")
+            GetNode<Node3D>("BossShipMesh/FiringMuzzles/Muzzle1"),
+            GetNode<Node3D>("BossShipMesh/FiringMuzzles/Muzzle2")
         ];
 
-        headZone = GetNode<Area3D>("CollisionZones/HeadZone");
-        bodyZone = GetNode<Area3D>("CollisionZones/BodyZone");
+        headZone = GetNode<Area3D>("BossShipMesh/CollisionZones/HeadZone");
+        bodyZone = GetNode<Area3D>("BossShipMesh/CollisionZones/BodyZone");
+        astRemoverZone = GetNode<Area3D>("BossShipMesh/CollisionZones/AsteroidZone");
         headZone.Monitoring = true;
         bodyZone.Monitoring = true;
         headZone.AreaEntered += (body) => OnZoneHit(headZone, body);
         bodyZone.AreaEntered += (body) => OnZoneHit(bodyZone, body);
+        astRemoverZone.BodyEntered += OnAsteroidKillerBodyEntered;
         ApplyPulseShaderToBody();
 
         headControlMesh = GetNode<MeshInstance3D>("BossShipMesh/BossHead/BossControlMesh3D");
         headControlMesh.MaterialOverride = HealthBarMaterial;
         HealthBarMaterial.SetShaderParameter("health_percent", currentHealth / MaxHealth);
-
-        PositionBehindPlayer();
 
         shootTimer = GetNode<Timer>("ShootTimer");
         shootTimer.WaitTime = ShootInterval;
@@ -66,8 +72,18 @@ public partial class BossEnemy : CharacterBody3D, IEnemy
         shootTimer.Start();
     }
 
+    private void OnAsteroidKillerBodyEntered(Node3D body)
+    {
+        if (body is Asteroid ast)
+        {
+            ast.Deactivate();
+        }
+    }
+
+
     public override void _PhysicsProcess(double delta)
     {
+        FollowPlayerZ();
         if (!active)
             return;
 
@@ -78,7 +94,7 @@ public partial class BossEnemy : CharacterBody3D, IEnemy
         HandlePulse(delta);
         UpdateHealthBar();
         SwayMovement();
-        FollowPlayerZ();
+        
     }
 
     private void ApplyPulseShaderToBody()
@@ -90,15 +106,6 @@ public partial class BossEnemy : CharacterBody3D, IEnemy
         PulseMaterial.SetShaderParameter("pulse_time", 0f);
     }
 
-    private void PositionBehindPlayer()
-    {
-        if (playerShip != null)
-            GlobalPosition = new Vector3(
-                0f,
-                GlobalPosition.Y,
-                playerShip.GlobalPosition.Z - PlayerSeparationDistance
-            );
-    }
 
     private void HandlePulse(double delta)
     {
@@ -150,22 +157,26 @@ public partial class BossEnemy : CharacterBody3D, IEnemy
 
     private void FireFromMuzzle(Node3D muzzle)
     {
-        Transform3D xf = muzzle.GlobalTransform;
+        Transform3D xf = GlobalTransform * muzzle.Transform;
         Vector3 origin = xf.Origin;
-        Vector3 forward = GlobalTransform.Basis.Z;
+        Vector3 forward = xf.Basis.Z.Normalized();
 
-        float arcRad = Mathf.DegToRad(FireArcAngle);
-        float step = (ProjectileQuantity > 1) ? arcRad / (ProjectileQuantity - 1) : 0f;
-        float offset = -arcRad * 0.5f;
-
+        float halfArc = FireArcAngle * 0.5f;
         for (int i = 0; i < ProjectileQuantity; i++)
         {
-            float angle = offset + step * i;
-            Vector3 dir = forward.Rotated(Vector3.Up, angle).Normalized();
+            float t = ProjectileQuantity > 1? (float)i / (ProjectileQuantity - 1): 0.5f;
+            float angleDeg = Mathf.Lerp(-halfArc, halfArc, t);
+            float angleRad = Mathf.DegToRad(angleDeg);
+
+            Vector3 dir = forward.Rotated(Vector3.Up, angleRad).Normalized();
+
             var proj = ProjectileScene.Instantiate<Area3D>();
-            proj.GlobalTransform = xf;
-            proj.LookAtFromPosition(origin, origin + dir, Vector3.Up);
             GetParent().AddChild(proj);
+
+            proj.GlobalPosition = origin;
+            proj.LookAtFromPosition(origin, origin + dir, Vector3.Up);
+
+            proj.Scale *= 3f;
         }
     }
 
@@ -177,7 +188,12 @@ public partial class BossEnemy : CharacterBody3D, IEnemy
             PulseMaterial.SetShaderParameter("highlight_color", color);
             pulseTimer = 0f; pulsing = true;
             PulseMaterial.SetShaderParameter("pulse_time", 0f);
-            TakeDamage(proj.Damage * Projectile.GlobalDamageMultiplier * (zone == headZone ? HeadDamageMultiplier : BodyDamageMultiplier));
+
+            float damageDealt = proj.Damage * Projectile.GlobalDamageMultiplier
+                          * (zone == headZone ? HeadDamageMultiplier : BodyDamageMultiplier);
+            TakeDamage(damageDealt);
+            var hud = GetTree().Root.GetNode<HeadsUpDisplay>("OuterSpace/HeadsUpDisplay");
+            hud?.ShowDamage(damageDealt);
             proj.QueueFree();
         }
     }
@@ -196,6 +212,8 @@ public partial class BossEnemy : CharacterBody3D, IEnemy
 
     private void Die()
     {
+        var hud = GetTree().Root.GetNode<HeadsUpDisplay>("OuterSpace/HeadsUpDisplay");
+        hud.AddScore(PointsValue);
         EmitSignal(SignalName.BossDefeated);
         Deactivate();
     }
@@ -203,10 +221,18 @@ public partial class BossEnemy : CharacterBody3D, IEnemy
 
     public void Activate()
     {
-        active = true;
         Show();
-        SetPhysicsProcess(true);
-        shootTimer?.Start();
+        bossAnimation = GetNode<AnimationPlayer>("BossShipMesh/AnimationPlayer");
+        bossAnimation.Play("BossSpawnIn");
+        bossAnimation.AnimationFinished += name =>
+        {
+            if (name == "BossSpawnIn")
+            {
+                active = true;
+                SetPhysicsProcess(true);
+            }
+        };
+
     }
 
     public void Deactivate()
@@ -215,5 +241,6 @@ public partial class BossEnemy : CharacterBody3D, IEnemy
         Hide();
         SetPhysicsProcess(false);
         shootTimer?.Stop();
+        QueueFree();
     }
 }
