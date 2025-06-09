@@ -22,6 +22,7 @@ public partial class Asteroid : StaticBody3D, IEnemy
         AddToGroup("Hostile");
         currentHealth = MaxHealth;
         Deactivate();
+        Scale *= 2; 
     }
 
     public override void _PhysicsProcess(double delta)

@@ -64,7 +64,10 @@ public partial class HeadsUpDisplay : CanvasLayer
         damageDoneLabel.Show();
 
         var tween = damageDoneLabel.CreateTween();
-
+                tween.TweenProperty(
+            damageDoneLabel, "modulate:a", 1f, 0.1f
+        ).SetTrans(Tween.TransitionType.Sine)
+         .SetEase(Tween.EaseType.Out);
 
         tween.TweenProperty(
                 damageDoneLabel, "scale", new Vector2(1.3f, 1.3f), 0.1f
@@ -73,24 +76,17 @@ public partial class HeadsUpDisplay : CanvasLayer
 
         tween.TweenProperty(
             damageDoneLabel, "scale", Vector2.One, 0.1f
-        ).SetDelay(0.1f)
+        ).SetDelay(1.0f)
          .SetTrans(Tween.TransitionType.Sine)
          .SetEase(Tween.EaseType.In);
 
-        tween.TweenProperty(
-            damageDoneLabel, "modulate:a", 1f, 0f
-        ).SetTrans(Tween.TransitionType.Sine)
-         .SetEase(Tween.EaseType.Out);
-
-        tween.TweenProperty(
-            damageDoneLabel, "modulate:a", 0f, 2.5f
-        ).SetDelay(2.0f)
-         .SetTrans(Tween.TransitionType.Sine)
-         .SetEase(Tween.EaseType.Out);
+        // tween.TweenProperty(
+        //     damageDoneLabel, "modulate:a", 0f, 2.5f
+        // ).SetDelay(2.0f)
+        //  .SetTrans(Tween.TransitionType.Sine)
+        //  .SetEase(Tween.EaseType.Out);
 
         tween.TweenCallback(Callable.From(() => damageDoneLabel.Hide()));
     }
-
-
 
 }

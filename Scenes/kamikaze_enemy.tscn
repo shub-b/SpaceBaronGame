@@ -90,6 +90,7 @@ _data = {
 size = Vector3(0.800781, 0.605225, 1.48779)
 
 [node name="KamikazeEnemy" type="CharacterBody3D" groups=["Hostile"]]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
 script = ExtResource("1_mqdx5")
 ProjectileScene = ExtResource("2_uttts")
 
@@ -109,7 +110,7 @@ visible = false
 debug_shape_custom_color = Color(0.460592, 0.382342, 0.02016, 1)
 
 [node name="KamikazeShipMesh" type="Node3D" parent="."]
-transform = Transform3D(-1, 0, -1.50996e-07, 0, 1, 0, 1.50996e-07, 0, -1, 0, 10, -100)
+transform = Transform3D(-1, 0, -2.53518e-06, 0, 1, 0, 2.53518e-06, 0, -1, 0, 10, -100)
 
 [node name="KamikazeHullMesh3D" type="MeshInstance3D" parent="KamikazeShipMesh"]
 transform = Transform3D(7.64274e-16, 6.55671e-08, -1, 0.4, -6.55671e-08, -2.11758e-22, -1.74846e-08, -1.5, -4.37114e-08, 0, 0, 0)

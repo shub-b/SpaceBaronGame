@@ -41,6 +41,9 @@ public partial class EnemySpawnHandler : Node3D
 
     public override void _Ready()
     {
+
+        AddChild(NullEnemy.Instance);
+        NullEnemy.Instance.Hide();
         playerShip = GetNode<CharacterBody3D>(PlayerNode);
         rng.Randomize();
 
@@ -135,6 +138,8 @@ public partial class EnemySpawnHandler : Node3D
         }
 
         Node3D node = enemy != null ? enemy : NullEnemy.Instance;
+        //node.SetDeferred("global_position", position);
+
         IEnemy ie = enemy != null ? enemy : NullEnemy.Instance;
 
         node.GlobalPosition = position;

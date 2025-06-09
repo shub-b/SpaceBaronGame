@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://c1j7gf6114g4p"]
+[gd_scene load_steps=34 format=3 uid="uid://c1j7gf6114g4p"]
 
 [ext_resource type="Script" uid="uid://bsw1dlmc6kxen" path="res://Scripts/PlayerShip.cs" id="1_a02cp"]
 [ext_resource type="Script" uid="uid://be8tn1aecvstw" path="res://Scripts/OuterSpace.cs" id="1_c5t2i"]
@@ -11,6 +11,7 @@
 [ext_resource type="Script" uid="uid://dw3pjnxnaq2cu" path="res://Scripts/DebugStatUI.cs" id="7_o06y3"]
 [ext_resource type="Script" uid="uid://bwkja6nrbkwvj" path="res://Scripts/HeadsUpDisplay.cs" id="9_0fj1v"]
 [ext_resource type="Shader" uid="uid://bgms3qnqd2vnw" path="res://Shaders/health_fill.gdshader" id="10_ikia7"]
+[ext_resource type="AudioStream" uid="uid://d0pm8mu4ia8rl" path="res://Scenes/PlasmaLaserLong02.wav" id="11_hgpy0"]
 [ext_resource type="PackedScene" uid="uid://d1v84gaa23dea" path="res://Scenes/boss_enemy.tscn" id="11_ikia7"]
 [ext_resource type="Script" uid="uid://6iw407bvso7f" path="res://Scripts/UpgradeMenu.cs" id="13_e0ngr"]
 [ext_resource type="FontFile" uid="uid://dl4dfqvuxra8s" path="res://Scenes/TabelSans-9MqPB.otf" id="14_e0ngr"]
@@ -165,10 +166,9 @@ KamikazeScene = ExtResource("7_k7acu")
 BossScene = ExtResource("11_ikia7")
 BossOffsetZ = 100.0
 AsteroidPoolSize = 500
-AsteroidSeparationDistance = 35.0
+AsteroidSeparationDistance = 32.0
 AsteroidXSpawnRange = Vector2(-100, 100)
 KamikazeSpawnDist = 200.0
-KamiKazeSpawnDistDelay = 50.0
 PlayerNode = NodePath("../PlayerShip")
 
 [node name="Timer" type="Timer" parent="EnemySpawnHandler"]
@@ -239,6 +239,9 @@ far = 2000.0
 
 [node name="ShootTimer" type="Timer" parent="PlayerShip"]
 one_shot = true
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="PlayerShip"]
+stream = ExtResource("11_hgpy0")
 
 [node name="DebugStatUI" type="CanvasLayer" parent="."]
 script = ExtResource("7_o06y3")
@@ -365,9 +368,10 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -49.0
-offset_right = 49.0
-offset_bottom = 46.0
+offset_left = -190.0
+offset_top = 10.0
+offset_right = 190.0
+offset_bottom = 56.0
 grow_horizontal = 2
 theme_override_fonts/font = ExtResource("14_e0ngr")
 theme_override_font_sizes/font_size = 45
@@ -385,6 +389,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="DamageDoneLabel" type="Label" parent="HeadsUpDisplay/DamageDone"]
+visible = false
 layout_mode = 0
 offset_right = 177.0
 offset_bottom = 46.0

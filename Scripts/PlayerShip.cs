@@ -18,6 +18,7 @@ public partial class PlayerShip : CharacterBody3D
     private float lastStrafeInput = 0f;
 
     public IPlayerController Controller { get; set; }
+    private AudioStreamPlayer3D laserSound;
     
     private bool active;
     private float currentStrafeSpeed = 0f;
@@ -30,6 +31,7 @@ public partial class PlayerShip : CharacterBody3D
     {
         initialXPos = GlobalPosition.X;
         currentHealth = MaxHealth;
+        laserSound = GetNode<AudioStreamPlayer3D>("AudioStreamPlayer3D");
         timer = GetNode<Timer>("ShootTimer");
         timer.WaitTime = ProjectileFireDelay;
         timer.Timeout += OnShootTimeout;
@@ -74,6 +76,7 @@ public partial class PlayerShip : CharacterBody3D
         if (Input.IsActionPressed("fire_projectile") && canShoot)
         {
             Controller.FireProjectile();
+            laserSound.Play();
             canShoot = false;
             timer.Start();
         }

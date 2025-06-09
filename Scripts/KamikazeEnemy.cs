@@ -3,8 +3,7 @@ using System;
 
 public partial class KamikazeEnemy : CharacterBody3D, IEnemy
 {
-    // — Inspector settings —
-    [Export] public float MoveSpeed { get; set; } = 100f;
+    [Export] public float MoveSpeed { get; set; } = 50f;
     [Export] public float MaxHealth { get; set; } = 15f;
     [Export] public int PointsValue { get; set; } = 300;
     [Export] public float Damage { get; set; } = 19f;
@@ -24,13 +23,15 @@ public partial class KamikazeEnemy : CharacterBody3D, IEnemy
     private AnimationPlayer anim;
     private Timer shootTimer;
     private Timer attackTimer;
+    private CollisionShape3D collider;
 
     public override void _Ready()
     {
         AddToGroup("Hostile");
         currentHealth = MaxHealth;
         playerShip = GetTree().Root.GetNode<CharacterBody3D>("OuterSpace/PlayerShip");
-
+        collider = GetNode<CollisionShape3D>("CollisionShape3D");
+        Scale *= 2;
         anim = GetNode<AnimationPlayer>("KamikazeShipMesh/AnimationPlayer");
         anim.AnimationFinished += name =>
         {
@@ -68,7 +69,7 @@ public partial class KamikazeEnemy : CharacterBody3D, IEnemy
             shootTimer.Stop();
         };
 
-        Deactivate();
+        //Deactivate();
     }
 
     public override void _PhysicsProcess(double delta)
@@ -108,13 +109,15 @@ public partial class KamikazeEnemy : CharacterBody3D, IEnemy
     {
         if (!active) return;
         currentHealth -= amount;
-        if (currentHealth <= 0f) Deactivate();
+        if (currentHealth <= 0f)
+            Deactivate();
     }
 
     public void Activate()
     {
         active = true;
         Show();
+        collider.Disabled =  false;
         state = State.Attack;
         SetPhysicsProcess(false);
         anim.Play("Intro");
@@ -124,6 +127,7 @@ public partial class KamikazeEnemy : CharacterBody3D, IEnemy
     {
         active = false;
         Hide();
+        collider.Disabled =  true;
         SetPhysicsProcess(false);
         shootTimer.Stop();
         attackTimer.Stop();
