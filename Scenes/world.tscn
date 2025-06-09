@@ -34,11 +34,17 @@ glow_normalized = true
 glow_intensity = 2.0
 glow_bloom = 0.13
 glow_blend_mode = 0
-fog_light_color = Color(0.0684683, 0.0373987, 0.0862754, 1)
-fog_light_energy = 1.25
-volumetric_fog_density = 0.0
-volumetric_fog_albedo = Color(0.112915, 0.0101003, 0.218595, 1)
-volumetric_fog_length = 100.0
+fog_enabled = true
+fog_light_color = Color(0.274092, 0.288024, 0.327067, 1)
+fog_light_energy = 0.05
+fog_sun_scatter = 0.06
+fog_density = 0.0034
+fog_height_density = 0.18
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.0171
+volumetric_fog_albedo = Color(0.0166458, 0, 0.387711, 1)
+volumetric_fog_length = 651.36
+volumetric_fog_detail_spread = 6.0
 
 [sub_resource type="PrismMesh" id="PrismMesh_ikia7"]
 
@@ -397,6 +403,34 @@ theme_override_fonts/font = ExtResource("14_e0ngr")
 theme_override_font_sizes/font_size = 45
 text = "DMG: ?"
 horizontal_alignment = 2
+
+[node name="AppliedBuff" type="Control" parent="HeadsUpDisplay"]
+layout_mode = 3
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="AppliedBuffLabel" type="Label" parent="HeadsUpDisplay/AppliedBuff"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -960.0
+offset_top = -70.0
+offset_right = 960.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_fonts/font = ExtResource("14_e0ngr")
+theme_override_font_sizes/font_size = 45
+text = "BUFF Placeholder"
+horizontal_alignment = 1
 
 [connection signal="BossSpawned" from="EnemySpawnHandler" to="." method="OnBossSpawned"]
 [connection signal="timeout" from="EnemySpawnHandler/Timer" to="EnemySpawnHandler" method="TrySpawn"]

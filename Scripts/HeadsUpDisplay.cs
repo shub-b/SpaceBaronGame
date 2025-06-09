@@ -12,6 +12,7 @@ public partial class HeadsUpDisplay : CanvasLayer
     private Control playerScoreContainer;
     private Label scoreLabel;
     private Label damageDoneLabel;
+    private Label appliedBuffLabel;
 
     private int score;
     private int killScore;
@@ -27,6 +28,7 @@ public partial class HeadsUpDisplay : CanvasLayer
         healthFill = healthBarContainer.GetNode<ColorRect>("HealthFill");
         shaderMat = healthFill.Material as ShaderMaterial;
         damageDoneLabel = GetNode<Label>("DamageDone/DamageDoneLabel");
+        appliedBuffLabel = GetNode<Label>("AppliedBuff/AppliedBuffLabel");
         score = 0;
         SetProcess(true);
     }
@@ -63,16 +65,18 @@ public partial class HeadsUpDisplay : CanvasLayer
         damageDoneLabel.Scale = Vector2.One;
         damageDoneLabel.Show();
 
+
+
         var tween = damageDoneLabel.CreateTween();
-                tween.TweenProperty(
-            damageDoneLabel, "modulate:a", 1f, 0.1f
-        ).SetTrans(Tween.TransitionType.Sine)
-         .SetEase(Tween.EaseType.Out);
+        tween.TweenProperty(
+                damageDoneLabel, "modulate:a", 1f, 0.1f
+            ).SetTrans(Tween.TransitionType.Sine)
+            .SetEase(Tween.EaseType.Out);
 
         tween.TweenProperty(
                 damageDoneLabel, "scale", new Vector2(1.3f, 1.3f), 0.1f
             ).SetTrans(Tween.TransitionType.Sine)
-             .SetEase(Tween.EaseType.Out);
+            .SetEase(Tween.EaseType.Out);
 
         tween.TweenProperty(
             damageDoneLabel, "scale", Vector2.One, 0.1f
@@ -80,13 +84,17 @@ public partial class HeadsUpDisplay : CanvasLayer
          .SetTrans(Tween.TransitionType.Sine)
          .SetEase(Tween.EaseType.In);
 
-        // tween.TweenProperty(
-        //     damageDoneLabel, "modulate:a", 0f, 2.5f
-        // ).SetDelay(2.0f)
-        //  .SetTrans(Tween.TransitionType.Sine)
-        //  .SetEase(Tween.EaseType.Out);
-
         tween.TweenCallback(Callable.From(() => damageDoneLabel.Hide()));
+    }
+    public void ShowBuff(string message)
+    {
+        appliedBuffLabel.Text = message;
+        appliedBuffLabel.Show();
+        var tween = appliedBuffLabel.CreateTween();
+
+        tween.TweenInterval(5.0f);
+        tween.TweenCallback(Callable.From(() => appliedBuffLabel.Hide())); ;
+
     }
 
 }

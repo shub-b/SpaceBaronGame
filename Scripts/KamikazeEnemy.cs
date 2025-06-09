@@ -127,9 +127,10 @@ public partial class KamikazeEnemy : CharacterBody3D, IEnemy
     {
         active = false;
         Hide();
-        collider.Disabled =  true;
+        collider.Disabled = true;
         SetPhysicsProcess(false);
         shootTimer.Stop();
         attackTimer.Stop();
+        Rotation = Vector3.Zero;
     }
 }

@@ -9,10 +9,13 @@ public partial class PowerPickup : Area3D
     [Export] public float FireRateDuration = 5f;
     [Export] public float FireRateMultiplier = 0.5f;
 
+    private HeadsUpDisplay hud;
+
     private BuffType chosenBuff;
 
     public override void _Ready()
     {
+        hud = GetTree().Root.GetNode<HeadsUpDisplay>("OuterSpace/HeadsUpDisplay");
         var rng = new RandomNumberGenerator();
         rng.Randomize();
         chosenBuff = (BuffType)rng.RandiRange(0, Enum.GetValues(typeof(BuffType)).Length - 1);
@@ -32,6 +35,7 @@ public partial class PowerPickup : Area3D
                         ship
                     );
                     GD.Print("INVINCIBILITY ACTIVATED.");
+                    hud.ShowBuff("INVINCIBILITY ACTIVATED.");
                     break;
 
                 case BuffType.FireRate:
@@ -42,11 +46,13 @@ public partial class PowerPickup : Area3D
                         ship
                     );
                     GD.Print("DOUBLE FIRE RATE ACTIVATED");
+                    hud.ShowBuff("DOUBLE FIRE RATE ACTIVATED");
                     break;
 
                 case BuffType.HealthRefill:
                     ship.Controller.RefillHealth();
                     GD.Print("HEALTH REFILLED");
+                    hud.ShowBuff("HEALTH REFILLED");
                     break;
             }
             QueueFree();
