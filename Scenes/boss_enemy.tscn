@@ -121,7 +121,7 @@ Frequency = 0.08
 ProjectileScene = ExtResource("2_hu4bx")
 ShootInterval = 1.0
 MuzzleDelay = 1.0
-FireArcAngle = 120.0
+MaxHealth = 300.0
 PulseMaterial = SubResource("ShaderMaterial_73776")
 HealthBarMaterial = ExtResource("4_73776")
 
